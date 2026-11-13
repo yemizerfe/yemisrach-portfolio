@@ -1,0 +1,1347 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Design tokens — "Navy Atelier, in colour"
+
+   The page is still built from one material — navy — but it is no longer
+   lit by a single lamp.
+
+   * Navy remains the brand colour, so `--color-primary` is a navy plate
+     rather than a white one. Every surface token sits on the same navy hue
+     family and only moves in lightness, so no card or panel ever reads as
+     grey against the page.
+   * The lights thrown on that navy are three high-chroma hues that all sit
+     comfortably against blue-violet — champagne (gold), violet and cyan —
+     plus emerald, which is kept for one job only: the honest
+     available/success signal. They are used as *lights* — glows, gradient
+     edges, signal dots, index marks — so the page stays navy while reading
+     as full colour, and never turns into a set of unrelated hues.
+   * Colour is generated, not hand-picked: `src/lib/accents.ts` hands each
+     data-driven item a register derived from its own id, and the animated
+     backdrops read their hues from the same tokens.
+
+   Motion follows the same rule as colour: the atmosphere is alive
+   (drifting orbs, a breathing mesh, sweeping light beams, a slow panning
+   grid), the content is calm. Everything decorative is composited, and the
+   global prefers-reduced-motion rule at the bottom of this file freezes
+   all of it.
+------------------------------------------------------------------ */
+@theme static {
+  /* --- The navy base ------------------------------------------------ */
+  --color-background: #05070f;
+  --color-foreground: #f3f5fb;
+  --color-foreground-subtle: #8f9ab4;
+
+  /* Slightly lifted navy used for raised bands (section tones, headers) */
+  --color-surface-raised: #080d1c;
+
+  --color-card: #0a1020;
+  --color-card-foreground: #f3f5fb;
+
+  --color-popover: #101a30;
+  --color-popover-foreground: #f3f5fb;
+
+  --color-secondary: #111a30;
+  --color-secondary-foreground: #f3f5fb;
+
+  --color-muted: #0d1526;
+  --color-muted-foreground: #a7b1c7;
+
+  /* --- Navy as the brand colour ------------------------------------
+   * `primary` is the brand plate: a navy that is clearly lifted from the
+   * page background, with a lighter navy edge so a navy button still reads
+   * as a solid object on a navy page. The vivid gradient button
+   * (`.button-vivid`) is built from violet → navy → cyan instead.
+   */
+  --color-primary: #1b2a55;
+  --color-primary-hover: #24386f;
+  --color-primary-edge: #3a5aa0;
+  --color-primary-foreground: #f5f8ff;
+
+  /* --- The lights ---------------------------------------------------
+   * Navy stays the material; these are the lights thrown on it. Three
+   * hues, all of them native to a navy page, so the site reads as one
+   * image instead of a colour wheel:
+   *
+   *   champagne — the signature warm light: gold, the brand accent
+   *   violet    — the structural cool light: headings, primary actions
+   *   cyan      — the electric signal: focus, links, live data
+   *
+   * Emerald is a fourth token but not a fourth mood: it exists for the
+   * available/success signal alone, so a status can never be missed.
+   *
+   * Each family carries a solid "mark" value for dots, rules and numbers,
+   * plus a lighter "soft" value that clears contrast for text on navy.
+   */
+  --color-accent: #e0b978;
+  --color-accent-soft: #f4ddb2;
+  --color-accent-foreground: #0d1426;
+
+  --color-accent-violet: #8b5cf6;
+  --color-accent-violet-soft: #d0c2ff;
+
+  --color-accent-cyan: #22d3ee;
+  --color-accent-cyan-soft: #b0f0ff;
+
+  --color-accent-emerald: #10b981;
+  --color-accent-emerald-soft: #a9f2d3;
+
+  /*
+   * Supporting registers — quieter steps inside the same lights, so a
+   * "quiet" mark is still on-palette.
+   *
+   *   ice  — cool and quiet: structure, secondary signals
+   *   ink  — navy-grey: the quietest marks and metadata
+   *
+   * Each has a solid value for marks (dots, hairlines, numbers) and a
+   * lighter "soft" value for text, because the soft value is the one that
+   * clears contrast on the navy background.
+   */
+  --color-accent-ice: #8fa6d4;
+  --color-accent-ice-soft: #cdd9f1;
+  --color-accent-ink: #6b7ba3;
+  --color-accent-ink-soft: #aebbd8;
+
+  /* --- Named aliases used by the animated background and the hero ----
+   * The backdrop layers predate the current palette, so the names they
+   * reach for are kept as aliases instead of being renamed: the theme, the
+   * components and the data-driven accents all stay in sync by definition.
+   */
+  --color-accent-iris: var(--color-accent-violet);
+  --color-accent-iris-soft: var(--color-accent-violet-soft);
+  --color-accent-sage: var(--color-accent-emerald);
+  --color-accent-sage-soft: var(--color-accent-emerald-soft);
+  --color-accent-brass: var(--color-accent);
+  --color-accent-brass-soft: var(--color-accent-soft);
+
+  --color-destructive: #ff6b5e;
+  --color-destructive-foreground: #1a0806;
+
+  --color-border: #1b2748;
+  --color-border-strong: #2b3b68;
+  --color-input: #202c50;
+  --color-ring: #22d3ee;
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  --radius: 1rem;
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /*
+   * Display type.
+   *
+   * The artistic weight of the page comes from contrast, not from colour: the
+   * headings are set light and large, the body stays small and quiet. That
+   * gap is what makes the composition read as designed rather than as a
+   * dashboard, and it costs nothing because it is the same sans typeface.
+   */
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+    letter-spacing: -0.03em;
+  }
+
+  h1 {
+    font-weight: 300;
+    letter-spacing: -0.04em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-accent-violet) 52%, transparent);
+    color: #ffffff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: #05070f;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #26325a;
+    border: 2px solid #05070f;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #3b4b86;
+  }
+}
+
+@layer components {
+  /* Centered page shell — 1248px content width with fluid gutters */
+  .shell {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .shell {
+      padding-inline: 2.75rem;
+    }
+  }
+
+  /* Monospaced technical label */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-foreground-subtle);
+  }
+
+  /*
+   * Display type.
+   *
+   * One shared treatment for every large heading: light weight, tight
+   * tracking, short line height. Set light on purpose — a 3rem heading at
+   * 300 weight over a dark field reads as drawn light rather than printed,
+   * which is what gives the page its gallery quality. Utilities at the call
+   * site still win, so a heading can override any of this.
+   */
+  .display {
+    font-weight: 300;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+
+  /*
+   * Light field.
+   *
+   * Wide, very low-opacity pools of the palette's own lights laid over the
+   * navy — violet from the top left, cyan from the top right, champagne
+   * rising from the bottom, and the brand navy pooling underneath. This
+   * replaces a drawn blueprint grid: the composition is modelled with light
+   * now instead of with lines, which is what makes the top of the page feel
+   * like a room rather than a schematic.
+   */
+  .light-field {
+    background:
+      radial-gradient(
+        58% 46% at 16% -4%,
+        color-mix(in oklab, var(--color-accent-violet) 16%, transparent),
+        transparent 68%
+      ),
+      radial-gradient(
+        52% 44% at 86% 10%,
+        color-mix(in oklab, var(--color-accent-cyan) 12%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        44% 40% at 8% 84%,
+        color-mix(in oklab, var(--color-accent) 10%, transparent),
+        transparent 74%
+      ),
+      radial-gradient(
+        70% 50% at 50% 108%,
+        color-mix(in oklab, var(--color-primary) 40%, transparent),
+        transparent 72%
+      );
+  }
+
+  /*
+   * Engraved dot lattice.
+   *
+   * The remaining technical texture, reduced to single dots on a 28px pitch
+   * and tinted from the accent rather than drawn in lines. Used behind the
+   * empty portrait slot, where it reads as the grain of a plate waiting for
+   * its subject.
+   */
+  .grid-backdrop {
+    background-image: radial-gradient(
+      color-mix(in oklab, var(--color-accent) 38%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 28px 28px;
+  }
+
+  /*
+   * Radial fade for the dot lattice, so it dissolves towards the edges
+   * instead of stopping on a hard line. Masked rather than overlapped with a
+   * gradient, which keeps the texture on one layer.
+   */
+  .grid-fade {
+    -webkit-mask-image: radial-gradient(
+      78% 72% at 50% 26%,
+      #000 0%,
+      color-mix(in oklab, #000 45%, transparent) 62%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      78% 72% at 50% 26%,
+      #000 0%,
+      color-mix(in oklab, #000 45%, transparent) 62%,
+      transparent 100%
+    );
+  }
+
+  /*
+   * Legibility scrim for the hero, which sits on top of the backend-graph
+   * backdrop. It darkens with the navy token itself (not a hard-coded black),
+   * so it stays correct if the palette changes: horizontally on wide screens,
+   * where the copy is a left column, and vertically when the columns stack.
+   */
+  .hero-scrim {
+    background: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--color-background) 95%, transparent),
+      color-mix(in oklab, var(--color-background) 66%, transparent) 48%,
+      transparent 80%
+    );
+  }
+
+  @media (max-width: 1023px) {
+    .hero-scrim {
+      background: linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--color-background) 96%, transparent),
+        color-mix(in oklab, var(--color-background) 78%, transparent) 60%,
+        transparent
+      );
+    }
+  }
+
+  /*
+   * Hero light.
+   *
+   * Three pools, all mixed from tokens so the wash can never drift away from
+   * the palette: violet from the top left, cyan from the top right, champagne
+   * rising behind the copy. Deliberately asymmetric — the light comes from
+   * the top left, where the identity copy sits, and the portrait side stays
+   * darker.
+   */
+  .hero-wash {
+    background:
+      radial-gradient(
+        46% 52% at 22% 0%,
+        color-mix(in oklab, var(--color-accent-violet) 22%, transparent),
+        transparent 74%
+      ),
+      radial-gradient(
+        40% 46% at 88% 4%,
+        color-mix(in oklab, var(--color-accent-cyan) 15%, transparent),
+        transparent 76%
+      ),
+      radial-gradient(
+        32% 36% at 34% 66%,
+        color-mix(in oklab, var(--color-accent) 12%, transparent),
+        transparent 80%
+      );
+  }
+
+  /*
+   * Gradient type.
+   *
+   * Three gradients, one job each. They are the loudest colour on the page, so
+   * they are reserved for display type only:
+   *
+   *   .text-gradient       aurora — white → violet → cyan → champagne. The
+   *                        default for the hero and the work sections: cool,
+   *                        structural, unmistakably "engineered dark".
+   *   .text-gradient-vivid poster — violet → cyan → champagne, beginning
+   *                        bright and landing in gold. Used where a heading
+   *                        should read loudest.
+   *   .text-gradient-warm  gold — cream → champagne → deeper gold. The
+   *                        personal sections (about, contact) so they feel
+   *                        warmer than the work sections, without adding a
+   *                        hue the palette does not already own.
+   *
+   * The background is wider than the text and the shared `animate-text-sheen`
+   * keyframe slides it sideways, so the colour walks through the glyphs
+   * instead of sitting still behind them.
+   *
+   * Declared without a competing text-colour utility at the call site, because
+   * `color: transparent` is what makes the background show through the glyphs.
+   * Browsers without background-clip: text fall back to solid foreground.
+   */
+  .text-gradient {
+    background-image: linear-gradient(
+      100deg,
+      #ffffff 0%,
+      #eef1ff 16%,
+      var(--color-accent-violet-soft) 36%,
+      var(--color-accent-cyan-soft) 58%,
+      var(--color-accent-soft) 84%,
+      var(--color-accent) 100%
+    );
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-vivid {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-accent-violet-soft) 0%,
+      var(--color-accent-violet) 22%,
+      var(--color-accent-cyan) 48%,
+      var(--color-accent-cyan-soft) 66%,
+      var(--color-accent-soft) 88%,
+      var(--color-accent) 100%
+    );
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-warm {
+    background-image: linear-gradient(
+      100deg,
+      #fff8ee 0%,
+      var(--color-accent-soft) 34%,
+      var(--color-accent) 74%,
+      #c39a52 100%
+    );
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    .text-gradient,
+    .text-gradient-vivid,
+    .text-gradient-warm {
+      background-image: none;
+      color: var(--color-foreground);
+    }
+  }
+
+  /*
+   * One blurred light cloud. Hue and strength arrive as CSS variables from
+   * `AuroraBackdrop`, so every colour still lives in this file. The blur is
+   * wide and the clouds are slow: the point is atmosphere and a sense of depth
+   * behind the navy, not a visible gradient.
+   *
+   * `mix-blend-mode: screen` is what turns flat radial fills into light: where
+   * two clouds overlap the hues add instead of one covering the other, which
+   * is how the violet/cyan intersections appear. It is the cheapest way to get
+   * a real colour mesh without a canvas.
+   */
+  .aurora-blob {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(
+      closest-side,
+      var(--blob-color, var(--color-accent)) 0%,
+      transparent 100%
+    );
+    filter: blur(100px) saturate(120%);
+    mix-blend-mode: screen;
+    opacity: var(--blob-opacity, 0.3);
+    will-change: transform;
+  }
+
+  /*
+   * Engraved plates: the illustrated layer of the background.
+   *
+   * The SVGs in `public/images` are already drawn in the navy palette, so
+   * `screen` compositing drops their darkest pixels into the page and keeps
+   * only the lit strokes — the drawing reads as light on navy rather than as
+   * a picture pasted over it. The radial mask dissolves each plate before its
+   * rectangle edge can show, and the shared `animate-float-slow` keeps them
+   * drifting a few pixels so the composition feels held rather than stuck.
+   * Frozen like every other layer by the global prefers-reduced-motion rule.
+   */
+  .plate-engraving {
+    mix-blend-mode: screen;
+    -webkit-mask-image: radial-gradient(
+      closest-side,
+      #000 58%,
+      color-mix(in oklab, #000 45%, transparent) 84%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      closest-side,
+      #000 58%,
+      color-mix(in oklab, #000 45%, transparent) 84%,
+      transparent 100%
+    );
+    will-change: transform;
+  }
+
+  /*
+   * The plate: the shared surface for every card and panel.
+   *
+   * Instead of a flat fill inside a hard 1px border, a plate is a navy
+   * gradient that is angled away from the light, closed by a top highlight
+   * and dropped by a wide, soft shadow. The result is a surface that looks
+   * like it has thickness, so the page can carry cards without twenty
+   * outlines — which is what the extra layer of borders was doing before.
+   *
+   * `--glow-color` is inherited from the accent palette, so a plate can warm
+   * its own edge without any component knowing which hue it is.
+   */
+  .surface {
+    position: relative;
+    background-image: linear-gradient(
+      165deg,
+      color-mix(in oklab, var(--color-card) 88%, var(--color-primary) 12%),
+      var(--color-card) 46%,
+      color-mix(in oklab, var(--color-card) 94%, #000 6%) 100%
+    );
+    border: 1px solid color-mix(in oklab, var(--color-border-strong) 62%, transparent);
+    box-shadow:
+      inset 0 1px 0 0 color-mix(in oklab, #ffffff 6%, transparent),
+      0 34px 70px -52px #000;
+  }
+
+  /*
+   * Lift.
+   *
+   * The hover treatment for a plate: a small rise, the edge warming towards the
+   * plate's own register, a wider drop shadow, and a hairline of light drawn
+   * along the top edge. Motion is short and eased, so a grid of cards feels
+   * composed rather than twitchy.
+   */
+  .card-glow {
+    transition:
+      transform 0.4s var(--ease-out-expo),
+      border-color 0.4s var(--ease-out-expo),
+      box-shadow 0.4s var(--ease-out-expo);
+  }
+
+  .card-glow::after {
+    content: "";
+    position: absolute;
+    inset-inline: 1.75rem;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in oklab, var(--glow-color, var(--color-accent)) 70%, #ffffff),
+      transparent
+    );
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out-expo);
+    pointer-events: none;
+  }
+
+  .card-glow:hover,
+  .card-glow:focus-within {
+    transform: translateY(-4px);
+    border-color: color-mix(
+      in oklab,
+      var(--glow-color, var(--color-accent)) 42%,
+      var(--color-border-strong)
+    );
+    /*
+     * Three shadows, in order: the hairline of light along the top edge, a
+     * soft pool of the plate's own register *inside* the card, and the drop
+     * shadow that lifts it off the page. The interior pool is an inset
+     * box-shadow rather than a pseudo-element on purpose — box shadows paint
+     * above the background and below the content, so the colour can never wash
+     * over type, and it animates on the shadow transition the card already has.
+     */
+    box-shadow:
+      inset 0 1px 0 0 color-mix(in oklab, #ffffff 8%, transparent),
+      inset 0 0 80px -46px
+        color-mix(in oklab, var(--glow-color, var(--color-accent)) 95%, transparent),
+      0 40px 80px -50px
+        color-mix(in oklab, var(--glow-color, var(--color-accent)) 60%, #000);
+  }
+
+  .card-glow:hover::after,
+  .card-glow:focus-within::after {
+    opacity: 1;
+  }
+
+  /*
+   * Slow conic light travelling around a framed element — used around the hero
+   * portrait. The palette's three lights in order, close enough in value that
+   * the ring reads as a single sweep of light rather than as a rainbow.
+   * Animates the registered --ring-angle, so nothing is transformed and the
+   * frame itself never moves.
+   */
+  .glow-ring {
+    position: relative;
+  }
+
+  .glow-ring::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: calc(var(--radius) + 14px);
+    padding: 1px;
+    background: conic-gradient(
+      from var(--ring-angle, 0deg),
+      transparent,
+      var(--color-accent-violet) 10%,
+      var(--color-accent-cyan) 22%,
+      var(--color-accent-soft) 34%,
+      var(--color-accent) 48%,
+      transparent 62%,
+      transparent 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.75;
+    animation: ring-spin 30s linear infinite;
+    pointer-events: none;
+  }
+
+  /* Hairline divider that fades out at both ends */
+  .rule-fade {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-border-strong),
+      transparent
+    );
+  }
+
+  /*
+   * Section seam.
+   *
+   * Sections are divided by light rather than by a rule: a single hairline that
+   * fades in from both edges and lifts very slightly towards the middle, where
+   * a trace of champagne is mixed in. Kept low-contrast on purpose — the
+   * divisions should be felt as a change of room, not read as table borders.
+   */
+  .section-seam {
+    position: relative;
+  }
+
+  .section-seam::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in oklab, var(--color-border-strong) 70%, transparent) 14%,
+      color-mix(in oklab, var(--color-accent-violet) 34%, var(--color-border-strong)) 34%,
+      color-mix(in oklab, var(--color-accent) 32%, var(--color-border-strong)) 50%,
+      color-mix(in oklab, var(--color-accent-cyan) 34%, var(--color-border-strong)) 66%,
+      color-mix(in oklab, var(--color-border-strong) 70%, transparent) 86%,
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  /*
+   * Hairline glow for fixed chrome (the navigation bar). Same construction as
+   * the section seam, drawn on its own 1px element so it can sit on a border
+   * without replacing it.
+   */
+  .seam-glow {
+    background: linear-gradient(
+      to right,
+      transparent,
+      color-mix(in oklab, var(--color-accent) 38%, var(--color-border-strong)) 50%,
+      transparent
+    );
+  }
+
+  /*
+   * Registration marks.
+   *
+   * Four L-shaped corner ticks, the way a technical plate is trimmed, drawn as
+   * eight one-pixel gradients: a horizontal and a vertical segment per corner.
+   * Kept for the two places that really are plates — the portrait slot and the
+   * system sketch — and dropped from the cards, which are lit surfaces now.
+   *
+   * The mark colour follows --glow-color when the surface has one; without it
+   * they fall back to the plain border colour.
+   */
+  .plate-marks {
+    --mark-color: color-mix(
+      in oklab,
+      var(--glow-color, var(--color-border-strong)) 34%,
+      var(--color-border-strong)
+    );
+    --mark-length: 9px;
+    --mark-inset: 10px;
+    background-image: linear-gradient(var(--mark-color) 0 0),
+      linear-gradient(var(--mark-color) 0 0), linear-gradient(var(--mark-color) 0 0),
+      linear-gradient(var(--mark-color) 0 0), linear-gradient(var(--mark-color) 0 0),
+      linear-gradient(var(--mark-color) 0 0), linear-gradient(var(--mark-color) 0 0),
+      linear-gradient(var(--mark-color) 0 0);
+    background-size:
+      var(--mark-length) 1px,
+      1px var(--mark-length),
+      var(--mark-length) 1px,
+      1px var(--mark-length),
+      var(--mark-length) 1px,
+      1px var(--mark-length),
+      var(--mark-length) 1px,
+      1px var(--mark-length);
+    background-position:
+      left var(--mark-inset) top var(--mark-inset),
+      left var(--mark-inset) top var(--mark-inset),
+      right var(--mark-inset) top var(--mark-inset),
+      right var(--mark-inset) top var(--mark-inset),
+      left var(--mark-inset) bottom var(--mark-inset),
+      left var(--mark-inset) bottom var(--mark-inset),
+      right var(--mark-inset) bottom var(--mark-inset),
+      right var(--mark-inset) bottom var(--mark-inset);
+    background-repeat: no-repeat;
+  }
+
+  /*
+   * Film grain.
+   *
+   * One static, pre-rendered noise tile (an inline SVG turbulence filter) laid
+   * over the whole page at very low strength and blended as soft-light. It
+   * removes the banding a large flat navy field always shows and gives the page
+   * the tooth of printed paper instead of the look of a screenshot of a
+   * gradient. Static on purpose: no animation, so it is one composited layer
+   * and no main-thread work.
+   */
+  .grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23grain)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+    opacity: 0.12;
+    mix-blend-mode: soft-light;
+  }
+
+  /*
+   * Edge vignette. Two soft pools of the page's own background colour pull the
+   * far corners back towards the navy, so the content column reads as lit from
+   * the middle rather than uniformly flat.
+   */
+  .vignette {
+    background:
+      radial-gradient(
+        120% 78% at 50% -12%,
+        transparent 46%,
+        color-mix(in oklab, var(--color-background) 72%, transparent) 100%
+      ),
+      radial-gradient(
+        92% 62% at 50% 118%,
+        transparent 40%,
+        color-mix(in oklab, var(--color-background) 68%, transparent) 100%
+      );
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes signal-flow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+@keyframes node-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Champagne headline: the gradient is wider than the text and slides across. */
+@keyframes text-sheen {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+/* Long, slow drift for the light clouds. Tempos differ so they stay out of sync. */
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(5%, -6%, 0) scale(1.14);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* Registered so the conic ring animates by angle instead of by transform. */
+@property --ring-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes ring-spin {
+  to {
+    --ring-angle: 360deg;
+  }
+}
+
+@layer utilities {
+  .animate-signal-flow {
+    animation: signal-flow 2.6s linear infinite;
+  }
+
+  .animate-node-pulse {
+    animation: node-pulse 3.2s ease-in-out infinite;
+  }
+
+  /* Slides the champagne gradient across a headline. Slow on purpose. */
+  .animate-text-sheen {
+    animation: text-sheen 18s ease-in-out infinite alternate;
+  }
+
+  .animate-aurora-1 {
+    animation: aurora-drift 30s ease-in-out infinite;
+  }
+
+  .animate-aurora-2 {
+    animation: aurora-drift 46s ease-in-out infinite;
+    animation-direction: reverse;
+  }
+
+  .animate-aurora-3 {
+    animation: aurora-drift 38s ease-in-out infinite;
+    animation-delay: -9s;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Animated atmosphere
+
+   The page carries five decorative layers, all of them composited and all
+   of them aria-hidden:
+
+     .mesh-field   one soft colour mesh behind everything
+     .orb          slow floating light clouds (per-hue, per-tempo)
+     .beam         diagonal streaks of light crossing the upper page
+     .grid-veil    a hairline grid panning on a 72px pitch
+     .spark        twinkling dust, seeded so the markup never changes
+
+   Nothing here animates a layout property: only transform, opacity and
+   background-position on already-painted layers, so the main thread stays
+   free. Hues arrive as CSS variables from the components, which means
+   every colour still lives in the token block at the top of this file.
+------------------------------------------------------------------ */
+@layer components {
+  /*
+   * Colour mesh: four wide radial pools in the palette's own lights — violet
+   * and cyan for structure, champagne for warmth, ice for depth. Radial
+   * gradients are soft by construction, so no blur filter is needed — a blur
+   * here would cost a full-screen repaint for a result the gradient already
+   * gives away.
+   */
+  .mesh-field {
+    position: absolute;
+    inset: -18%;
+    background-image:
+      radial-gradient(
+        38% 34% at 14% 10%,
+        color-mix(in oklab, var(--color-accent-violet) 58%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        34% 30% at 86% 6%,
+        color-mix(in oklab, var(--color-accent-cyan) 50%, transparent),
+        transparent 72%
+      ),
+      radial-gradient(
+        40% 36% at 76% 68%,
+        color-mix(in oklab, var(--color-accent) 34%, transparent),
+        transparent 74%
+      ),
+      radial-gradient(
+        32% 28% at 48% 44%,
+        color-mix(in oklab, var(--color-accent-ice) 26%, transparent),
+        transparent 76%
+      );
+    filter: saturate(130%);
+    opacity: var(--mesh-opacity, 0.5);
+    animation: mesh-breathe 28s ease-in-out infinite alternate;
+    will-change: transform, opacity;
+  }
+
+  /*
+   * Floating light cloud. Same construction as `.aurora-blob` but with a
+   * per-blob tempo, so a field of them never moves as one sheet.
+   */
+  .orb {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(
+      closest-side,
+      var(--orb-color, var(--color-accent-violet)) 0%,
+      transparent 100%
+    );
+    filter: blur(72px) saturate(135%);
+    mix-blend-mode: screen;
+    opacity: var(--orb-opacity, 0.34);
+    animation: orb-drift var(--orb-duration, 34s) ease-in-out infinite;
+    animation-delay: var(--orb-delay, 0s);
+    will-change: transform;
+  }
+
+  /*
+   * Light beam: a rotated gradient panel blurred into a streak and swept
+   * across the viewport. This is the single most "poster-like" element on
+   * the page, so it is kept faint (one beam is under 20% of the way to full
+   * colour) and blended with screen so it lifts the navy instead of greying
+   * it out.
+   */
+  .beam-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    mix-blend-mode: screen;
+  }
+
+  .beam {
+    position: absolute;
+    top: -55%;
+    height: 210%;
+    width: 22rem;
+    background: linear-gradient(
+      100deg,
+      transparent,
+      color-mix(in oklab, var(--beam-color, var(--color-accent-cyan)) 22%, transparent) 48%,
+      transparent
+    );
+    filter: blur(34px);
+    animation: beam-sweep var(--beam-duration, 24s) linear infinite;
+    animation-delay: var(--beam-delay, -4s);
+    will-change: transform;
+  }
+
+  /*
+   * Panning hairline grid. The element is one tile wider than its parent and
+   * translates by exactly one tile, so the loop is seamless and the browser
+   * only has to move a composited layer.
+   */
+  .grid-veil {
+    position: absolute;
+    inset: -72px;
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--color-accent-violet) 14%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--color-accent-cyan) 12%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 72px 72px;
+    -webkit-mask-image: radial-gradient(
+      80% 70% at 50% 26%,
+      #000 0%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(80% 70% at 50% 26%, #000 0%, transparent 100%);
+    animation: grid-pan 16s linear infinite;
+    will-change: transform;
+  }
+
+  /*
+   * Twinkling dust. Positions, sizes and delays are seeded in the component
+   * and arrive as inline variables; this class only owns the shape and the
+   * breath, so the same dot appears in the same place on every render.
+   */
+  .spark {
+    position: absolute;
+    border-radius: 9999px;
+    background: var(--spark-color, var(--color-accent-cyan));
+    animation: spark-twinkle var(--spark-duration, 6s) ease-in-out infinite;
+    animation-delay: var(--spark-delay, 0s);
+    opacity: 0;
+  }
+
+  /*
+   * Per-section light. `Section` derives the hue from its own id, so twelve
+   * sections read as twelve rooms rather than one long corridor. It sits at
+   * z-index 0 while the section's `.shell` is lifted to z-index 1, which is
+   * what keeps a blurred pool of colour from ever washing over type.
+   */
+  .section-glow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .section-glow > span {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(
+      closest-side,
+      var(--glow-color, var(--color-accent-violet)) 0%,
+      transparent 100%
+    );
+    filter: blur(90px) saturate(130%);
+    mix-blend-mode: screen;
+    opacity: 0.2;
+    animation: orb-drift var(--glow-duration, 44s) ease-in-out infinite;
+    will-change: transform;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Artistic components
+
+   Coloured surfaces that carry the palette into the content layer: the
+   gradient call-to-action, the animated hairline used by the navigation
+   and the footer, the conic "aurora" edge for framed panels, the infinite
+   technology rail, and a soft coloured halo for display type.
+------------------------------------------------------------------ */
+@layer components {
+  /*
+   * Infinite rail. The component renders the list twice and the track
+   * translates by exactly half its own width, so the seam is never visible.
+   * Hovering pauses it, which is also what makes it readable.
+   */
+  .marquee {
+    position: relative;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 7%,
+      #000 93%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 7%,
+      #000 93%,
+      transparent
+    );
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    gap: var(--marquee-gap, 2.5rem);
+    animation: marquee-scroll var(--marquee-duration, 46s) linear infinite;
+    will-change: transform;
+  }
+
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+
+  /*
+   * The one genuinely loud button on the site: violet → indigo → cyan, with
+   * a coloured drop shadow that matches whichever end of the gradient is
+   * currently in view. Reserved for the primary call to action.
+   */
+  .button-vivid {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-accent-violet) 0%,
+      #4f46e5 44%,
+      #0891b2 100%
+    );
+    background-size: 190% 100%;
+    background-position: 0% 50%;
+    color: #ffffff;
+    box-shadow:
+      inset 0 1px 0 0 color-mix(in oklab, #ffffff 28%, transparent),
+      0 14px 40px -18px color-mix(in oklab, var(--color-accent-violet) 85%, #000);
+  }
+
+  .button-vivid:hover {
+    background-position: 100% 50%;
+    box-shadow:
+      inset 0 1px 0 0 color-mix(in oklab, #ffffff 34%, transparent),
+      0 18px 48px -18px color-mix(in oklab, var(--color-accent-cyan) 85%, #000);
+  }
+
+  /*
+   * Aurora edge: a conic band of the palette's lights travelling around a
+   * panel. Same registered --ring-angle trick as `.glow-ring`, drawn with
+   * the mask-composite cut-out so only the 1px band shows.
+   */
+  .aurora-border {
+    position: relative;
+  }
+
+  .aurora-border::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--ring-angle, 0deg),
+      var(--color-accent-violet),
+      var(--color-accent-cyan),
+      var(--color-accent),
+      var(--color-accent-violet)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.45s var(--ease-out-expo);
+    animation: ring-spin 24s linear infinite;
+    pointer-events: none;
+  }
+
+  .aurora-border:hover::after,
+  .aurora-border:focus-within::after {
+    opacity: 0.85;
+  }
+
+  /* Animated gradient hairline (navigation, footer, section seams). */
+  .gradient-line {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-accent-violet),
+      var(--color-accent-cyan),
+      var(--color-accent),
+      var(--color-accent-cyan),
+      transparent
+    );
+    background-size: 220% 100%;
+    animation: gradient-pan 9s linear infinite;
+  }
+
+  /* Soft coloured halo behind display type, in the element's own register. */
+  .text-glow {
+    text-shadow: 0 0 38px
+      color-mix(in oklab, var(--glow-color, var(--color-accent-violet)) 55%, transparent);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Keyframes for the animated atmosphere.
+
+   Every one of these animates a composited property only (transform,
+   opacity, background-position), never a layout property, so the page
+   keeps its scroll performance while looking alive. The global
+   prefers-reduced-motion rule below freezes all of them at once.
+------------------------------------------------------------------ */
+
+/* The colour mesh breathes: a slow scale-and-fade, so the field behind the
+   navy is never quite the same twice. */
+@keyframes mesh-breathe {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+    opacity: var(--mesh-opacity, 0.5);
+  }
+  50% {
+    transform: scale(1.12) translate3d(2%, -3%, 0);
+    opacity: calc(var(--mesh-opacity, 0.5) + 0.12);
+  }
+  100% {
+    transform: scale(1.04) translate3d(-3%, 2%, 0);
+    opacity: calc(var(--mesh-opacity, 0.5) - 0.06);
+  }
+}
+
+/* Light clouds wander on two axes so no two blobs ever move in step. */
+@keyframes orb-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(7%, -9%, 0) scale(1.14);
+  }
+  66% {
+    transform: translate3d(-6%, 6%, 0) scale(0.92);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* A streak of light crossing the upper page. The rotation is repeated in
+   each keyframe because a transform list replaces the previous one. */
+@keyframes beam-sweep {
+  from {
+    transform: translate3d(-70vw, 0, 0) rotate(18deg);
+  }
+  to {
+    transform: translate3d(170vw, 0, 0) rotate(18deg);
+  }
+}
+
+/* Exactly one grid tile of travel, which makes the pan seamless. */
+@keyframes grid-pan {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(72px, 72px, 0);
+  }
+}
+
+/* Dust that fades up from nothing and back down. */
+@keyframes spark-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  50% {
+    opacity: var(--spark-opacity, 0.85);
+    transform: scale(1);
+  }
+}
+
+/* Half the track is one full copy of the list, so -50% loops seamlessly. */
+@keyframes marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Walks the gradient of a hairline sideways. */
+@keyframes gradient-pan {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+/* A very small vertical float, for badges and plates that should feel lit
+   rather than pinned. */
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -9px, 0);
+  }
+}
+
+@layer utilities {
+  .animate-mesh {
+    animation: mesh-breathe 28s ease-in-out infinite alternate;
+  }
+
+  .animate-float {
+    animation: float-soft 7s ease-in-out infinite;
+  }
+
+  .animate-float-slow {
+    animation: float-soft 11s ease-in-out infinite;
+  }
+
+  .animate-gradient-line {
+    animation: gradient-pan 9s linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+    color: #111111;
+  }
+}
+

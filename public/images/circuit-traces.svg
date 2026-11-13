@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" fill="none">
+  <!-- Circuit plate: a QFN footprint with routed traces, vias, pads and fiducials.
+       Three traces carry the palette's lights; the rest are ground routing. -->
+
+  <!-- Fiducials -->
+  <g fill="#8fa6d4" fill-opacity="0.7">
+    <circle cx="36" cy="36" r="4"/>
+    <circle cx="564" cy="36" r="4"/>
+    <circle cx="36" cy="564" r="4"/>
+  </g>
+
+  <!-- Chip -->
+  <rect x="230" y="230" width="140" height="140" rx="8" stroke="#2b3b68"/>
+  <rect x="242" y="242" width="116" height="116" rx="4" stroke="#1b2748" stroke-dasharray="4 5"/>
+  <circle cx="248" cy="248" r="3" fill="#8fa6d4"/>
+
+  <!-- Pins -->
+  <g stroke="#2b3b68">
+    <path d="M252 230v-16M276 230v-16M300 230v-16M324 230v-16M348 230v-16"/>
+    <path d="M370 252h16M370 276h16M370 300h16M370 324h16M370 348h16"/>
+    <path d="M252 370v16M276 370v16M300 370v16M324 370v16M348 370v16"/>
+    <path d="M230 252h-16M230 276h-16M230 300h-16M230 324h-16M230 348h-16"/>
+  </g>
+
+  <!-- Chip labels -->
+  <text x="300" y="306" text-anchor="middle"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11"
+        letter-spacing="3" fill="#8fa6d4">SVC-01</text>
+  <text x="300" y="324" text-anchor="middle"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8"
+        letter-spacing="1.5" fill="#6b7ba3">QFN · 48</text>
+
+  <!-- Traces -->
+  <path d="M300 214V170L270 140H180L150 110V64" stroke="#22d3ee"/>
+  <path d="M276 214V186L246 156H96L66 126V90" stroke="#2b3b68"/>
+  <path d="M348 214V160L378 130H470L500 100V60" stroke="#2b3b68"/>
+  <path d="M386 276H430L460 306H528" stroke="#8b5cf6"/>
+  <path d="M386 324H420L450 354H540L560 374" stroke="#2b3b68"/>
+  <path d="M300 386V430L270 460H200L170 490V548" stroke="#2b3b68"/>
+  <path d="M348 386V420L378 450H460L490 480V528" stroke="#e0b978"/>
+  <path d="M214 300H170L140 270H70L40 240V186" stroke="#2b3b68"/>
+  <path d="M214 348H180L150 378H96L66 408" stroke="#2b3b68"/>
+
+  <!-- Vias -->
+  <g stroke-width="1.2">
+    <circle cx="150" cy="64" r="8" stroke="#22d3ee"/><circle cx="150" cy="64" r="3" fill="#22d3ee"/>
+    <circle cx="66" cy="90" r="8" stroke="#2b3b68"/><circle cx="66" cy="90" r="2.5" fill="#6b7ba3"/>
+    <circle cx="500" cy="60" r="8" stroke="#2b3b68"/><circle cx="500" cy="60" r="2.5" fill="#6b7ba3"/>
+    <circle cx="528" cy="306" r="8" stroke="#8b5cf6"/><circle cx="528" cy="306" r="3" fill="#8b5cf6"/>
+    <circle cx="560" cy="374" r="6" stroke="#2b3b68"/><circle cx="560" cy="374" r="2.5" fill="#6b7ba3"/>
+    <circle cx="170" cy="548" r="8" stroke="#2b3b68"/><circle cx="170" cy="548" r="2.5" fill="#6b7ba3"/>
+    <circle cx="490" cy="528" r="8" stroke="#e0b978"/><circle cx="490" cy="528" r="3" fill="#e0b978"/>
+    <circle cx="40" cy="186" r="8" stroke="#2b3b68"/><circle cx="40" cy="186" r="2.5" fill="#6b7ba3"/>
+  </g>
+
+  <!-- SMD pads -->
+  <g stroke="#2b3b68">
+    <rect x="44" y="402" width="44" height="12" rx="6"/>
+    <rect x="44" y="430" width="44" height="12" rx="6"/>
+    <rect x="44" y="458" width="44" height="12" rx="6"/>
+  </g>
+  <circle cx="66" cy="408" r="2.5" fill="#6b7ba3"/>
+
+  <!-- Silkscreen notes -->
+  <text x="44" y="490" font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
+        font-size="8" letter-spacing="1.5" fill="#6b7ba3">GND</text>
+  <text x="564" y="564" text-anchor="end"
+        font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="8"
+        letter-spacing="1.5" fill="#6b7ba3">REV 2.1</text>
+</svg>

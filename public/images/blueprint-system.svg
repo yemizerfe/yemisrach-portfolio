@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 460" fill="none">
+  <!-- Blueprint plate: server-rack elevation with datastore, cache, queue, workers. -->
+  <defs>
+    <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="7" stroke="#1b2748" stroke-width="1"/>
+    </pattern>
+    <style>
+      .t { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    </style>
+  </defs>
+
+  <!-- Sheet frame + registration crosses + scale ticks -->
+  <rect x="10.5" y="10.5" width="619" height="439" stroke="#1b2748"/>
+  <g stroke="#2b3b68">
+    <path d="M16 24h16M24 16v16M608 24h16M616 16v16M16 436h16M24 428v16M608 436h16M616 428v16"/>
+  </g>
+  <path d="M60 11v7M100 11v7M140 11v7M180 11v7M220 11v7M260 11v7M300 11v7M340 11v7M380 11v7M420 11v7M460 11v7M500 11v7M540 11v7M580 11v7" stroke="#1b2748"/>
+
+  <!-- Rack: six units with vents, handles, status LEDs -->
+  <rect x="64" y="76" width="168" height="288" stroke="#2b3b68"/>
+  <g stroke="#1b2748">
+    <path d="M64 124h168M64 172h168M64 220h168M64 268h168M64 316h168"/>
+    <path d="M76 90h40M76 96h40M76 102h40M76 108h40M76 138h40M76 144h40M76 150h40M76 156h40"/>
+    <path d="M76 186h40M76 192h40M76 198h40M76 204h40M76 234h40M76 240h40M76 246h40M76 252h40"/>
+    <path d="M76 282h40M76 288h40M76 294h40M76 300h40M76 330h40M76 336h40M76 342h40M76 348h40"/>
+  </g>
+  <g stroke="#2b3b68">
+    <rect x="196" y="92" width="24" height="16" rx="3"/>
+    <rect x="196" y="140" width="24" height="16" rx="3"/>
+    <rect x="196" y="188" width="24" height="16" rx="3"/>
+    <rect x="196" y="236" width="24" height="16" rx="3"/>
+    <rect x="196" y="284" width="24" height="16" rx="3"/>
+    <rect x="196" y="332" width="24" height="16" rx="3"/>
+  </g>
+  <g>
+    <circle cx="136" cy="100" r="2.5" fill="#22d3ee"/><circle cx="152" cy="100" r="2.5" fill="#2b3b68"/>
+    <circle cx="136" cy="148" r="2.5" fill="#8b5cf6"/><circle cx="152" cy="148" r="2.5" fill="#2b3b68"/>
+    <circle cx="136" cy="196" r="2.5" fill="#e0b978"/><circle cx="152" cy="196" r="2.5" fill="#2b3b68"/>
+    <circle cx="136" cy="244" r="2.5" fill="#22d3ee"/><circle cx="152" cy="244" r="2.5" fill="#2b3b68"/>
+    <circle cx="136" cy="292" r="2.5" fill="#8fa6d4"/><circle cx="152" cy="292" r="2.5" fill="#2b3b68"/>
+    <circle cx="136" cy="340" r="2.5" fill="#e0b978"/><circle cx="152" cy="340" r="2.5" fill="#2b3b68"/>
+  </g>
+
+  <!-- Plinth + hatched ground -->
+  <rect x="56" y="364" width="184" height="14" stroke="#2b3b68"/>
+  <rect x="40" y="378" width="216" height="16" fill="url(#hatch)" stroke="#1b2748"/>
+
+  <!-- Dimension line -->
+  <g stroke="#2b3b68">
+    <path d="M44 76v288"/>
+    <path d="M40 82l4-6 4 6M40 358l4 6 4-6"/>
+  </g>
+  <text x="34" y="230" transform="rotate(-90 34 230)" text-anchor="middle" class="t" font-size="9" letter-spacing="1.5" fill="#6b7ba3">6U · 1800</text>
+
+  <!-- Datastore cylinder -->
+  <g stroke="#2b3b68">
+    <ellipse cx="336" cy="104" rx="48" ry="14"/>
+    <path d="M288 104v92M384 104v92"/>
+    <path d="M288 196a48 14 0 0 0 96 0"/>
+  </g>
+  <g stroke="#1b2748">
+    <path d="M288 134a48 14 0 0 0 96 0M288 165a48 14 0 0 0 96 0"/>
+  </g>
+  <text x="336" y="161" text-anchor="middle" class="t" font-size="9" letter-spacing="1" fill="#8fa6d4">PG · PRIMARY</text>
+
+  <!-- Cache -->
+  <rect x="292" y="250" width="112" height="64" rx="4" stroke="#2b3b68"/>
+  <rect x="302" y="260" width="92" height="44" stroke="#1b2748" stroke-dasharray="3 4"/>
+  <text x="348" y="287" text-anchor="middle" class="t" font-size="9" letter-spacing="1" fill="#8fa6d4">REDIS · TTL</text>
+
+  <!-- Queue -->
+  <g stroke="#2b3b68">
+    <rect x="480" y="84" width="96" height="30" rx="4"/>
+    <rect x="480" y="126" width="96" height="30" rx="4"/>
+    <rect x="480" y="168" width="96" height="30" rx="4"/>
+  </g>
+  <circle cx="496" cy="99" r="3" fill="#22d3ee"/>
+  <circle cx="496" cy="141" r="3" fill="#8b5cf6"/>
+  <circle cx="496" cy="183" r="3" fill="#2b3b68"/>
+  <g class="t" font-size="8" letter-spacing="1" fill="#6b7ba3">
+    <text x="544" y="103" text-anchor="middle">QUEUE 01</text>
+    <text x="544" y="145" text-anchor="middle">QUEUE 02</text>
+    <text x="544" y="187" text-anchor="middle">QUEUE 03</text>
+  </g>
+
+  <!-- Workers -->
+  <g stroke="#2b3b68">
+    <circle cx="528" cy="252" r="14"/>
+    <circle cx="528" cy="302" r="14"/>
+    <circle cx="528" cy="352" r="14"/>
+  </g>
+  <g class="t" font-size="8" fill="#8fa6d4">
+    <text x="528" y="255" text-anchor="middle">W1</text>
+    <text x="528" y="305" text-anchor="middle">W2</text>
+    <text x="528" y="355" text-anchor="middle">W3</text>
+  </g>
+  <path d="M528 198v40" stroke="#2b3b68" stroke-dasharray="3 4"/>
+
+  <!-- Flow lines -->
+  <path d="M232 118h28l28-8" stroke="#22d3ee" stroke-opacity="0.75"/>
+  <circle cx="260" cy="118" r="3" fill="#22d3ee"/>
+  <path d="M232 286h32l28-4" stroke="#8b5cf6" stroke-opacity="0.75"/>
+  <circle cx="264" cy="286" r="3" fill="#8b5cf6"/>
+  <path d="M336 210v40" stroke="#2b3b68" stroke-dasharray="3 4"/>
+  <path d="M480 96h-44l-52 12" stroke="#1b2748" stroke-dasharray="3 4"/>
+
+  <!-- Title block -->
+  <rect x="396" y="384" width="220" height="48" stroke="#2b3b68"/>
+  <path d="M396 404h220" stroke="#1b2748"/>
+  <text x="406" y="399" class="t" font-size="9" letter-spacing="2" fill="#8fa6d4">SYSTEM ELEVATION</text>
+  <text x="406" y="423" class="t" font-size="8" letter-spacing="1" fill="#6b7ba3">FIG. 01 · SVC-01</text>
+  <text x="606" y="423" text-anchor="end" class="t" font-size="8" letter-spacing="1" fill="#6b7ba3">REV 2.1</text>
+</svg>
