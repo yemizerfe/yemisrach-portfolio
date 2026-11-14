@@ -9,16 +9,15 @@ import type { ContactSubmission } from "@/types/portfolio";
  * Browser-side delivery through EmailJS.
  *
  * EmailJS sends from the browser with a public key, which is exactly what this
- * deployment needs: there is no server secret to provision, and the provider
- * refuses server-side calls for this account ("API access from non-browser
- * environments is currently disabled"). The key is public by design — it can
- * only send through this one service and template — so the `NEXT_PUBLIC_`
- * prefix is correct here rather than careless.
+ * deployment needs: no server secret is involved. The key is public by design —
+ * it can only send through this one service and template — so the
+ * `NEXT_PUBLIC_` prefix is correct here rather than careless.
  *
- * The route handler is still the fallback: when these variables are absent the
- * form posts to /api/contact exactly as before. Delivery is attempted, never
- * assumed: `sendViaEmailJs` reports what happened, and the form only clears
- * itself and says "sent" when the provider accepted the message.
+ * The separately deployed API (`server/`) is the only fallback: when these
+ * variables are absent and NEXT_PUBLIC_CONTACT_API_URL is set, the form posts
+ * there. Delivery is attempted, never assumed: `sendViaEmailJs` reports what
+ * happened, and the form only clears itself and says "sent" when the provider
+ * accepted the message.
  */
 
 const config = {

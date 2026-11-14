@@ -54,7 +54,7 @@ function ChannelIcon({ id, className }: { id: string; className?: string }) {
  * worth reading before the form asks for anything.
  *
  * Nothing here invents a detail. The channels come from `siteConfig`, which
- * holds no address until a real one exists; the form posts to /api/contact,
+ * holds no address until a real one exists; the form sends through EmailJS,
  * which refuses honestly when delivery is not configured instead of reporting a
  * success it did not have.
  */

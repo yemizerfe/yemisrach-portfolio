@@ -28,7 +28,17 @@ import {
 import { isDeliveryConfigured, sendContactMessage } from "./email.js";
 import { addressKey, checkRateLimit, clientAddressFrom } from "./rate-limit.js";
 
-const port = Number(process.env.API_PORT ?? process.env.PORT ?? 4000);
+/**
+ * Hosts like Render, Railway and Fly inject `PORT` and route to that one; Docker
+ * in this repo sets `API_PORT`. PORT wins so a copied .env cannot bind a port
+ * nobody is routing to.
+ *
+ * An empty or non-numeric value counts as absent: `Number("")` is 0, which would
+ * otherwise bind a random port nobody forwards to.
+ */
+const requestedPort = (process.env.PORT || process.env.API_PORT || "4000").trim();
+const parsedPort = Number(requestedPort);
+const port = Number.isInteger(parsedPort) && parsedPort > 0 ? parsedPort : 4000;
 
 /** Five messages per ten minutes per client: ample for a person, thin for a script. */
 const rateLimit = { limit: 5, windowMs: 10 * 60 * 1000 };

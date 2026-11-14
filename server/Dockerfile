@@ -25,7 +25,8 @@ USER node
 EXPOSE 4000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:'+(process.env.API_PORT||4000)+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||process.env.API_PORT||4000)+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
-# Secrets (RESEND_API_KEY, CONTACT_*) are runtime environment, never build args.
+# Secrets (EMAILJS_PRIVATE_KEY, CONTACT_TO_EMAIL, ALLOWED_ORIGINS) are runtime
+# environment, never build args.
 CMD ["node", "server.js"]

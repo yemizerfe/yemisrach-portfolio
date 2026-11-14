@@ -207,6 +207,15 @@ export function ContactForm({ email }: ContactFormProps) {
         return;
       }
 
+      // EmailJS is the browser's only route. When it is not configured and no
+      // separate API is deployed, say so instead of calling an endpoint that
+      // no longer exists.
+      if (!contactApiBase) {
+        setStatus("error");
+        setNotice(failureCopy(503));
+        return;
+      }
+
       const response = await fetch(contactEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
