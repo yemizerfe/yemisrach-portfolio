@@ -1,0 +1,49 @@
+# client/.gitignore — Next.js site
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Next.js build output
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# Environment — only the template is committed
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing and tooling output
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+.puppeteer/
+*.trace.json
+
+# Deployment/platform
+.vercel
+.netlify
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*~
+
+# Docker (built from the folder above)
+Dockerfile.bak

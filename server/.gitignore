@@ -1,0 +1,22 @@
+# server/.gitignore — contact API
+
+# Dependencies. package-lock.json IS committed: Docker's `npm ci` needs it.
+node_modules/
+
+# Environment — secrets stay out; the template is committed
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.pid
+
+# Runtime and testing output
+coverage/
+.nyc_output/
+tmp/

@@ -1,0 +1,12 @@
+node_modules
+.next
+npm-debug.log*
+.env
+.env.*
+!.env.example
+.git
+.vercel
+Dockerfile
+.dockerignore
+*.log
+screenshot*.png
