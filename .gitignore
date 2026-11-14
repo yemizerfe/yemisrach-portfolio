@@ -1,38 +1,89 @@
-# dependencies
-node_modules
+# ---------------------------------------------------------------------------
+# Dependencies
+# ---------------------------------------------------------------------------
+node_modules/
 .pnp
 .pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# next.js
+# The backend has its own package.json; its lockfile is committed (Docker's
+# `npm ci` needs it), its installed packages are not.
+server/node_modules/
+
+# ---------------------------------------------------------------------------
+# Next.js / build output
+# ---------------------------------------------------------------------------
 /.next/
 /out/
-next-env.d.ts
-
-# production
 /build
+next-env.d.ts
+*.tsbuildinfo
 
-# misc
-.DS_Store
-*.pem
-Thumbs.db
+# ---------------------------------------------------------------------------
+# Environment — secrets never belong in the repository
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!**/.env.example
+server/.env
+server/.env.local
 
-# debug
+# ---------------------------------------------------------------------------
+# Logs and debugging
+# ---------------------------------------------------------------------------
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
+logs/
+*.pid
 
-# env files
-.env
-.env*.local
+# ---------------------------------------------------------------------------
+# Testing and tooling output
+# ---------------------------------------------------------------------------
+coverage/
+.nyc_output/
+/test-results/
+/playwright-report/
+/.puppeteer_cache/
+.puppeteer/
+*.trace.json
 
-# typescript
-*.tsbuildinfo
+# ---------------------------------------------------------------------------
+# Docker and deployment artifacts
+# ---------------------------------------------------------------------------
+docker-compose.override.yml
+*.tar
+*.tar.gz
+/backups/
+/uploads/
 
-# vercel
-.vercel
-
-# editors
+# ---------------------------------------------------------------------------
+# Editor and OS noise
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
 .vscode/*
 !.vscode/extensions.json
-.idea
+*.swp
+*.swo
+*~
+*.pem
+
+# ---------------------------------------------------------------------------
+# Platform and agent scratch files
+# ---------------------------------------------------------------------------
+.vercel
+.netlify
+.freebuff/
+.cloud-attachments/
+.tmp/
+.temp/

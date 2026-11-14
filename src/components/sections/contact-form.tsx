@@ -43,6 +43,19 @@ import type {
  * person reading it.
  */
 
+/**
+ * Where the fallback POST goes.
+ *
+ * When the API runs as its own service (`server/server.js` in a container),
+ * NEXT_PUBLIC_CONTACT_API_URL points at it and the request is cross-origin;
+ * otherwise the same-origin route handler answers.
+ */
+const contactApiBase = (process.env.NEXT_PUBLIC_CONTACT_API_URL ?? "").replace(
+  /\/+$/,
+  "",
+);
+const contactEndpoint = `${contactApiBase}/api/contact`;
+
 const emptySubmission: ContactSubmission = {
   name: "",
   email: "",
@@ -194,7 +207,7 @@ export function ContactForm({ email }: ContactFormProps) {
         return;
       }
 
-      const response = await fetch("/api/contact", {
+      const response = await fetch(contactEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

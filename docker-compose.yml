@@ -1,0 +1,27 @@
+# `docker compose up --build` builds the image from the Dockerfile and runs
+# both processes: the site on 3000, the contact API on 4000.
+#
+# Values are read from a `.env` file next to this one (or the shell). The
+# NEXT_PUBLIC_* entries are build arguments because Next inlines them.
+
+services:
+  portfolio:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+        NEXT_PUBLIC_EMAILJS_SERVICE_ID: ${NEXT_PUBLIC_EMAILJS_SERVICE_ID:-}
+        NEXT_PUBLIC_EMAILJS_TEMPLATE_ID: ${NEXT_PUBLIC_EMAILJS_TEMPLATE_ID:-}
+        NEXT_PUBLIC_EMAILJS_PUBLIC_KEY: ${NEXT_PUBLIC_EMAILJS_PUBLIC_KEY:-}
+        NEXT_PUBLIC_EMAILJS_TO_EMAIL: ${NEXT_PUBLIC_EMAILJS_TO_EMAIL:-}
+        NEXT_PUBLIC_CONTACT_API_URL: ${NEXT_PUBLIC_CONTACT_API_URL:-}
+    environment:
+      # Read by server/server.js at request time, never by the browser.
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      CONTACT_TO_EMAIL: ${CONTACT_TO_EMAIL:-}
+      CONTACT_FROM_EMAIL: ${CONTACT_FROM_EMAIL:-}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-}
+    ports:
+      - "3000:3000"
+      - "4000:4000"
+    restart: unless-stopped

@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // The Docker image builds a self-contained server (`next start` and this
+  // option are mutually exclusive, so it stays off elsewhere).
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   poweredByHeader: false,
   async redirects() {
     return [
