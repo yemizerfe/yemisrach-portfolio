@@ -1,3 +1,0 @@
-# Drop the portrait photo in this folder, then set `portraitPhoto.src`
-# in src/data/portrait.ts to "/images/<file-name>".
-# Recommended: a 4:5 crop, JPG or WebP, ~1200px wide.

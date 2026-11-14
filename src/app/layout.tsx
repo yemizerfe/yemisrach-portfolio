@@ -43,6 +43,9 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${GeistSans.variable} ${GeistMono.variable}`}
+      // The page scrolls smoothly for section links; telling Next about it
+      // keeps its route transitions from fighting the CSS behaviour.
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <body className="min-h-dvh bg-background text-foreground">

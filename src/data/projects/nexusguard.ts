@@ -3,12 +3,13 @@ import type { Project } from "@/types/portfolio";
 /**
  * NexusGuard — security-focused application and analysis workflow.
  *
- * Honesty note, and the most important one on this page: NexusGuard is not a
- * scanner and does not claim to be. It does not detect vulnerabilities, it does
- * not cover OWASP, and it holds no certification or audit. What it is: an async
- * API that models security work as a structured, auditable workflow, plus the
- * security engineering that comes with building that properly —
- * authentication, authorization, validation and migrations.
+ * Honesty note, and the most important one on this page: NexusGuard is a
+ * security testing platform. The repository contains a real scanner
+ * (`server/services/scanner.py`, `vuln_scanner.py`) that runs checks against an
+ * authorised target, an AI-assisted analysis layer over the recorded results,
+ * and an alert service. It does not claim OWASP coverage, certification or
+ * audit, and it is not a substitute for a professional assessment. Scans run
+ * only against targets the operator is authorised to test.
  *
  * Public-safety note: the API is described by responsibility, never by route.
  * No endpoint paths, hostnames, ports, connection strings, credentials or
@@ -19,11 +20,11 @@ export const nexusGuard: Project = {
   name: "NexusGuard",
   category: "Security Testing Platform",
   tagline:
-    "A security-focused web application designed around structured security testing workflows, API services, authentication, and security-oriented analysis.",
+    "A security testing platform that scans authorised targets, records findings as structured runs, and adds AI-assisted analysis over the results.",
   summary:
-    "NexusGuard is a security-oriented web application: a FastAPI backend that models security work as a structured, auditable workflow, and a React interface that turns the resulting data into something a person can actually reason about.",
+    "NexusGuard is a security testing platform: a FastAPI backend that runs scans against authorised targets, records each run as a structured, auditable workflow, and adds AI-assisted analysis over the results — with a React dashboard for the findings, alerts and history.",
   status: "Done",
-  role: "Solo build — async FastAPI backend, relational schema and migrations, authentication and authorization, validation, realtime channel, and the React dashboard that consumes it.",
+  role: "Solo build — async FastAPI backend, the scanning and analysis services, relational schema and migrations, authentication and authorization, background jobs, realtime channel, and the React dashboard that consumes it.",
   technologies: [
     "Python",
     "FastAPI",
@@ -34,6 +35,9 @@ export const nexusGuard: Project = {
     "Pydantic",
     "JWT",
     "WebSockets",
+    "Redis",
+    "Background jobs (RQ)",
+    "Gemini (AI analysis)",
     "React 19",
     "TypeScript",
     "Vite",
@@ -51,6 +55,7 @@ export const nexusGuard: Project = {
     "Alembic",
     "Pydantic",
     "JWT",
+    "Redis",
     "REST APIs",
   ],
   supportingStack: [
@@ -62,12 +67,7 @@ export const nexusGuard: Project = {
     "Zustand",
     "Recharts",
   ],
-  qualifiedStack: [
-    {
-      label: "Used where implemented",
-      items: ["WebSockets", "Redis", "Background tasks", "Gemini (external AI service)"],
-    },
-  ],
+
   stackGroups: [
     {
       label: "Backend",
@@ -104,9 +104,15 @@ export const nexusGuard: Project = {
       ],
     },
     {
-      label: "Where implemented",
-      status: "planned",
-      items: ["WebSockets", "Redis", "Background tasks", "Gemini (external AI service)"],
+      label: "Platform & services",
+      items: [
+        "Redis",
+        "RQ background jobs",
+        "WebSockets",
+        "Gemini (AI-assisted analysis)",
+        "Docker",
+        "Rate limiting",
+      ],
     },
   ],
   engineeringConcepts: [
@@ -126,6 +132,10 @@ export const nexusGuard: Project = {
   solution:
     "NexusGuard models a test run as an explicit workflow: a run targets a set of targets, progresses through defined states, and accumulates observations that stay attached to the run that produced them. Every state change is recorded, so a run can be reconstructed instead of remembered. The platform is deliberately the record of the work rather than an automated assessor of it: the tooling makes security work reviewable, it does not pretend to perform it.",
   features: [
+    "Security scans against authorised targets",
+    "Vulnerability checks for common web weaknesses",
+    "AI-assisted analysis of recorded findings",
+    "Security alerts and dashboard summaries",
     "Structured test run lifecycle with explicit states",
     "Target registration with typed scope metadata",
     "Observation logging attached to a specific run and target",
@@ -135,7 +145,7 @@ export const nexusGuard: Project = {
     "Async FastAPI endpoints backed by async SQLAlchemy",
     "Schema migrations managed with Alembic",
     "Request and response validation through Pydantic models",
-    "WebSocket channel for live run status where implemented",
+    "WebSocket channel for live run status",
     "Recharts visualizations built from aggregation endpoints",
     "Composable dashboard views over run and observation data",
     "Consistent API error format across the whole surface",
@@ -182,20 +192,20 @@ export const nexusGuard: Project = {
       {
         name: "WebSockets",
         detail:
-          "Where implemented, a channel that pushes run status changes so the interface does not have to poll.",
+          "A channel that pushes scan and run status changes so the interface does not have to poll.",
       },
       {
         name: "Redis",
         detail:
-          "Where implemented, short-lived state such as rate-limit counters and run-status fan-out across instances.",
+          "Short-lived state: rate-limit counters, session data and status fan-out across instances.",
       },
       {
         name: "External AI service",
         detail:
-          "Where implemented, an external provider used to assist with information already recorded in a run. It is not a detection engine, and no model was trained for this project.",
+          "An external provider used to summarise and interpret the findings a run already recorded. It explains results; it does not replace the scanner that produced them, and no model was trained for this project.",
       },
     ],
-    note: "The workflow, API, schema and dashboard layers are the focus of the build. WebSockets, Redis and the external AI service are marked as implemented only where they are, and nothing in this project claims scanning or detection capability.",
+    note: "The scanner, the workflow, the API, the schema and the dashboard are all part of the build. Redis, WebSockets and the AI service are used by the parts of it that need them, and the AI layer interprets recorded findings rather than inventing them.",
   },
   githubUrl: "https://github.com/yemizerfe/NexusGuard",
   liveUrl: undefined,
@@ -207,9 +217,9 @@ export const nexusGuard: Project = {
       description:
         "What this application is, and — stated first — what it deliberately is not.",
       paragraphs: [
-        "NexusGuard is a security-focused web application. Earlier versions of it were called SecurityTesterApp, so an unfamiliar name on an older link explains itself.",
-        "The important framing is what it does not do. It does not scan anything, it does not detect vulnerabilities, and it makes no claim to OWASP coverage or certification. Detecting vulnerabilities is a research problem; keeping a record of security work reviewable is an engineering problem, and this project is the second one.",
-        "What it is: an async FastAPI backend that models a test run as an explicit workflow — targets, states, observations and state changes — and a React interface that turns that structured record into something a person can reason about after the fact.",
+        "NexusGuard is a security testing platform. Earlier versions of it were called SecurityTesterApp, so an unfamiliar name on an older link explains itself.",
+        "It runs scans against a target the operator is authorised to test, records what each run checked, and keeps the findings attached to the run that produced them. An AI-assisted layer summarises those findings; it does not replace the checks. No OWASP coverage, certification or audit is claimed, and the tool is not a substitute for a professional assessment.",
+        "What it is, technically: an async FastAPI backend with a scanning service, a relational record of targets, runs, observations and state changes, Redis for short-lived state and background jobs for work that should not block a request — plus a React interface that turns the record into something a person can reason about afterwards.",
       ],
     },
     {
@@ -245,7 +255,7 @@ export const nexusGuard: Project = {
         "Authentication — JWT-based sign-in with role checks on protected resources.",
         "Local password reset — Recovery handled inside the application rather than depending on an external mail provider.",
         "Dashboard views — Aggregation endpoints feed Recharts views, so the summary numbers come from the backend.",
-        "Live run status — Where implemented, a WebSocket channel pushes status changes so the interface does not poll.",
+        "Live run status — A WebSocket channel pushes status changes so the interface does not poll.",
         "Consistent error format — One error shape across the whole API, so clients handle failure once.",
       ],
     },
@@ -297,20 +307,20 @@ export const nexusGuard: Project = {
           {
             name: "WebSockets",
             detail:
-              "Where implemented, a channel that pushes run status changes so the interface does not have to poll.",
+              "A channel that pushes scan and run status changes so the interface does not have to poll.",
           },
           {
             name: "Redis",
             detail:
-              "Where implemented, short-lived state such as rate-limit counters and run-status fan-out across instances.",
+              "Short-lived state: rate-limit counters, session data and status fan-out across instances.",
           },
           {
             name: "External AI service",
             detail:
-              "Where implemented, an external provider used to assist with information already recorded in a run. It is not a detection engine, and no model was trained for this project.",
+              "An external provider that summarises the findings a run already recorded. It explains results; it does not replace the scanner, and no model was trained for this project.",
           },
         ],
-        note: "Nothing in this diagram is a scanner. Every component exists to record, structure or display security work — not to perform it.",
+        note: "The scanning service is the component that produces findings; everything around it records, analyses, alerts on and displays them.",
       },
     },
     {
@@ -353,7 +363,7 @@ export const nexusGuard: Project = {
         {
           name: "Response & live update",
           detail:
-            "The result is serialized through a response model, and — where implemented — a status change is pushed over the WebSocket channel so open views update without polling.",
+            "The result is serialized through a response model, and a status change is pushed over the WebSocket channel so open views update without polling.",
         },
       ],
       note: "Validation and authorization happen before any query is issued for a write. A request that fails either check costs a database connection but never a row.",
@@ -493,7 +503,7 @@ export const nexusGuard: Project = {
           area: "Realtime channel",
           methods: ["WS"],
           summary:
-            "Where implemented, an authenticated channel that carries run status changes.",
+            "An authenticated channel that carries run status changes.",
           capabilities: [
             "Authenticate the connection before it carries anything",
             "Push a status change to the views watching that run",
@@ -581,7 +591,7 @@ export const nexusGuard: Project = {
         {
           challenge: "Serving realtime updates next to a normal HTTP API",
           approach:
-            "Where implemented, the WebSocket channel is authenticated on connect and is treated as an additional way to hear about a change — never as the place a change is stored. Views still read from the API.",
+            "The WebSocket channel is authenticated on connect and is treated as an additional way to hear about a change — never as the place a change is stored. Views still read from the API.",
           result:
             "A client that cannot hold a channel open loses immediacy, not information, which is what keeps the realtime layer from becoming a second source of truth.",
         },
@@ -592,7 +602,7 @@ export const nexusGuard: Project = {
       id: "performance",
       title: "Performance & scalability",
       description:
-        "What the build does today, and what is used only where implemented.",
+        "What the build does today, and the services it runs alongside the API.",
       columns: [
         {
           label: "Implemented now",
@@ -608,14 +618,13 @@ export const nexusGuard: Project = {
           ],
         },
         {
-          label: "Where implemented",
-          status: "planned",
+          label: "Supporting services",
           summary:
-            "Present in the design and used only where the implementation actually includes them.",
+            "What runs alongside the API so scans, alerts and status updates do not sit on the request path.",
           items: [
-            "Redis for short-lived state such as rate-limit counters",
+            "Redis for rate-limit counters and short-lived state",
+            "RQ background jobs for work that should not block a response",
             "Status fan-out across more than one instance",
-            "Background tasks for work that should not block a response",
             "Paged reads on long run histories",
           ],
         },
@@ -755,7 +764,7 @@ async def get_session() -> AsyncIterator[AsyncSession]:
             "Container image built and published to a registry",
             "A managed PostgreSQL instance",
             "A reverse proxy with TLS termination in front of the API",
-            "Redis provisioned for the short-lived state it is designed to hold",
+            "A managed Redis instance and a separate worker fleet in a hosted environment",
             "Running more than one instance, with status fan-out across them",
           ],
         },
@@ -866,7 +875,7 @@ async def get_session() -> AsyncIterator[AsyncSession]:
       title: "Future improvements",
       status: "planned",
       description:
-        "Labelled as future work. None of this is claimed as built, and none of it would turn this into a scanner.",
+        "Labelled as future work. None of this is claimed as built.",
       items: [
         "Expanded security-analysis workflows — More structured work types beyond a single run shape, still recorded rather than performed automatically.",
         "More advanced visualization — Deeper dashboard views over the same aggregation endpoints, including comparison across runs.",
@@ -918,9 +927,15 @@ async def get_session() -> AsyncIterator[AsyncSession]:
           ],
         },
         {
-          label: "Where implemented",
-          status: "planned",
-          items: ["WebSockets", "Redis", "Background tasks", "Gemini (external AI service)"],
+          label: "Platform & services",
+          items: [
+            "Redis",
+            "RQ background jobs",
+            "WebSockets",
+            "Gemini (AI-assisted analysis)",
+            "Docker",
+            "Rate limiting",
+          ],
         },
       ],
     },

@@ -3,11 +3,11 @@ import type { Project } from "@/types/portfolio";
 /**
  * CEOOO — executive decision-support workspace.
  *
- * Accuracy note: this is an interface and product-thinking build. It has no
- * server-side persistence, no authentication and no company integrations, and
- * the case study says so rather than borrowing credibility from technologies it
- * does not use. ERP and CRM integrations are labelled as future work, never as
- * present capability.
+ * Accuracy note: this is a full-stack build. The repository contains a Next.js
+ * client and an Express API with Prisma over PostgreSQL, JWT sessions and Google
+ * OAuth, password reset by email, and Kubernetes manifests. Integrations run
+ * through Paragon where a connection is configured; deeper ERP and CRM data sync
+ * is still labelled as future work, never as present capability.
  *
  * AI note: decision support consumes an external AI provider through an
  * integration layer. No model was trained for this project and no autonomous
@@ -23,27 +23,34 @@ export const ceooo: Project = {
   tagline:
     "An executive-focused platform for organizing business information, decisions, projects, budgets, goals, stakeholders, and performance.",
   summary:
-    "CEOOO is a product concept brought to life as an interface: a single surface where an executive can see strategy, execution, money and people together, because the decisions that matter always span more than one of them.",
+    "CEOOO is an executive workspace: a Next.js client over an Express and PostgreSQL API, built so strategy, execution, money and people can be read together because the decisions that matter always span more than one of them.",
   status: "Done",
-  role: "Solo build — product concept, information architecture, domain modelling, state design, component system and interface.",
+  role: "Solo build — product concept, information architecture, domain modelling, Express API and Prisma schema, JWT and Google OAuth sessions, integrations, and the component system and interface.",
   technologies: [
+    "Node.js",
+    "Express",
+    "PostgreSQL",
+    "Prisma",
     "Next.js",
-    "React",
     "TypeScript",
+    "JWT",
+    "Google OAuth",
     "Tailwind CSS",
-    "shadcn/ui",
-    "Zustand",
-    "Framer Motion",
-    "GSAP",
     "External AI provider",
   ],
   /**
-   * CEOOO has no backend layer, and the card says so instead of padding the
-   * list. The interface runs on typed local models: no server-side API, no
-   * persistence and no authentication — which is exactly what the
-   * `qualifiedStack` entries state.
+   * Backend-first: the repository has an Express API with Prisma over
+   * PostgreSQL, JWT sessions and Google OAuth, so the card leads with that
+   * rather than with the interface.
    */
-  backendStack: [],
+  backendStack: [
+    "Node.js",
+    "Express",
+    "PostgreSQL",
+    "Prisma",
+    "JWT",
+    "Google OAuth",
+  ],
   supportingStack: [
     "Next.js",
     "React",
@@ -51,17 +58,15 @@ export const ceooo: Project = {
     "Tailwind CSS",
     "shadcn/ui",
     "Zustand",
-    "Framer Motion",
-    "GSAP",
+    "Recharts",
   ],
   qualifiedStack: [
     {
-      label: "Not built yet",
+      label: "Planned",
       items: [
-        "Server-side persistence",
-        "Authentication",
-        "Role-based permissions",
-        "ERP / CRM integrations",
+        "Deeper ERP data sync",
+        "Deeper CRM data sync",
+        "Granular role permissions",
       ],
     },
   ],
@@ -89,10 +94,10 @@ export const ceooo: Project = {
     {
       label: "Data",
       items: [
+        "PostgreSQL",
+        "Prisma schema and migrations",
         "Typed domain models",
         "Derived selectors",
-        "Client-side state",
-        "Local persistence for the demo dataset",
       ],
     },
     {
@@ -100,14 +105,12 @@ export const ceooo: Project = {
       items: ["External AI provider (server-side integration layer)"],
     },
     {
-      label: "Planned / not built yet",
+      label: "Planned",
       status: "planned",
       items: [
-        "Server-side persistence",
-        "Authentication",
-        "Role-based permissions",
-        "ERP integrations",
-        "CRM integrations",
+        "Deeper ERP data sync",
+        "Deeper CRM data sync",
+        "Granular role permissions",
       ],
     },
   ],
@@ -152,6 +155,16 @@ export const ceooo: Project = {
           "Server components for the dashboard shell and metadata; client components only where interaction requires them.",
       },
       {
+        name: "Express API (server)",
+        detail:
+          "REST endpoints for the workspace modules, with JWT sessions, Google OAuth sign-in, validation and Prisma as the data boundary.",
+      },
+      {
+        name: "PostgreSQL (Prisma)",
+        detail:
+          "Persistent records for decisions, projects, budgets, goals, stakeholders, notes and support requests, with versioned migrations.",
+      },
+      {
         name: "Domain model",
         detail:
           "TypeScript types defining decisions, projects, budgets, goals, KPIs, stakeholders and notes as referenceable entities.",
@@ -172,9 +185,9 @@ export const ceooo: Project = {
           "Dashboard, budget, projects, OKRs, KPIs, calendar, stakeholders and notes, each a composition over the shared model rather than a separate world.",
       },
       {
-        name: "Business data",
+        name: "Workspace data",
         detail:
-          "A typed local dataset for the demo. No company systems, no production data and no live external integration beyond the AI provider.",
+          "Records read through the API. The seeded dataset is sample data for the demo, not a company's production records.",
       },
     ],
     services: [
@@ -194,15 +207,9 @@ export const ceooo: Project = {
           "Motion used to explain change: panel transitions, list reordering and progress indication. Both respect reduced-motion preferences, and GSAP is reserved for the few sequences it genuinely improves.",
       },
     ],
-    note: "This is a concept and interface build. There is no server-side persistence, no authentication and no ERP or CRM integration — the section below states exactly which parts are designed rather than built.",
+    note: "The client, the API, the schema and the session model are all in the repository. Integrations are connected through Paragon where configured; deeper ERP and CRM data sync is the part still labelled as planned.",
   },
-  /**
-   * Note: the product is named CEOOO, while the public GitHub repository is
-   * spelled "CEOOOO". The display name and the link are kept deliberately
-   * separate, because the repository spelling is the one that resolves on
-   * GitHub.
-   */
-  githubUrl: "https://github.com/yemizerfe/CEOOOO",
+  githubUrl: "https://github.com/yemizerfe/ceooo",
   liveUrl: undefined,
   caseStudy: [
     {
@@ -210,10 +217,10 @@ export const ceooo: Project = {
       id: "overview",
       title: "Overview",
       description:
-        "A workspace concept, and what it is honest about not being.",
+        "A workspace for executive decisions, and the stack underneath it.",
       paragraphs: [
-        "CEOOO is an executive workspace: decisions, projects, budgets, objectives, KPIs, calendar, stakeholders and notes held in one place rather than eight. It is a product concept carried through to a working interface, and the case study describes it as that.",
-        "Two limits are stated up front because they shape every claim below. There is no server-side persistence and no authentication: the application runs on typed local models, so nothing is claimed about multi-user access, permissions or data at rest. And there is no ERP or CRM integration — company-performance views are designed over the shared model, and connecting them to real business systems is future work, labelled as such.",
+        "CEOOO is an executive workspace: decisions, projects, budgets, objectives, KPIs, calendar, stakeholders and notes held in one place rather than eight. It began as a product concept and was carried through to a working full-stack application.",
+        "It is a full-stack application: a Next.js client over an Express API with Prisma and PostgreSQL, JWT sessions with Google OAuth sign-in, and password reset by email. The dataset it ships with is seeded sample data, so nothing on this page claims real company records or live ERP data sync — that deeper integration is the part still labelled as planned.",
       ],
     },
     {
@@ -258,7 +265,7 @@ export const ceooo: Project = {
       id: "architecture",
       title: "Architecture",
       description:
-        "One model, many compositions. The interface is the application — there is no server tier to describe, and none is implied.",
+        "One model, many compositions — served by a real API and a relational schema rather than held in the browser.",
       architecture: {
         flow: [
           {
@@ -292,9 +299,9 @@ export const ceooo: Project = {
               "Dashboard, budget, projects, OKRs, KPIs, calendar, stakeholders and notes, each a composition over the shared model rather than a separate world.",
           },
           {
-            name: "Business data",
+            name: "Workspace data",
             detail:
-              "A typed local dataset for the demo. No company systems and no production data: an executive's real figures would arrive through integrations that are not built yet.",
+              "Records read through the API from PostgreSQL. The seeded rows are sample data; deeper ERP and CRM data sync is the part still planned.",
           },
         ],
         services: [
@@ -327,26 +334,28 @@ export const ceooo: Project = {
         {
           label: "Implemented",
           summary:
-            "The interface, the shared domain model and the AI assistance path — all running on a local dataset.",
+            "The client, the API, the schema, the session model and the AI assistance path.",
           items: [
             "Next.js workspace with all modules as compositions over one model",
-            "Typed domain model and derived selectors, so figures have one source",
-            "Zustand state for interface concerns",
+            "Express REST API with validation and Prisma as the data boundary",
+            "PostgreSQL schema with versioned migrations",
+            "JWT sessions and Google OAuth sign-in",
+            "Password reset by email",
             "AI-assisted decision support through a server-side call to an external provider",
-            "Local persistence for the demo dataset",
+            "Kubernetes manifests for the client, API, PostgreSQL and Redis",
           ],
         },
         {
           label: "Planned / future improvements",
           status: "planned",
           summary:
-            "Everything that would make this a multi-user product rather than an interface concept.",
+            "Deeper business-system data and finer-grained access than the current build covers.",
           items: [
-            "ERP integration for real financial and operational data",
-            "CRM integration for customer and pipeline information",
-            "Server-side persistence to replace the local dataset",
-            "Authentication, so a workspace can belong to someone",
-            "Role-based permissions for granular access",
+            "Deeper ERP data sync for real financial and operational figures",
+            "Deeper CRM data sync for customer and pipeline information",
+            "Granular role permissions for scoped access",
+            "Multi-user collaboration on shared records",
+            "Scheduled instead of on-demand integration runs",
           ],
         },
       ],
@@ -517,16 +526,16 @@ export const ceooo: Project = {
       kind: "list",
       id: "security",
       title: "Authentication & security",
-      status: "planned",
       description:
-        "What is genuinely absent, and the one credential boundary that is handled deliberately. Nothing here is claimed as built.",
+        "How sessions and credentials are handled in the build, and what is not claimed.",
       items: [
-        "No authentication — The workspace is a single-user demo. No login, session or access-control claim is made, and none is implied by the interface.",
-        "No server-side persistence — There is no stored company or user data, so there is no data at rest to protect or to overstate.",
-        "Provider credentials stay server-side — The AI integration layer runs on the server, so the provider key is never exposed to the browser or bundled into the client.",
-        "Configuration through the environment — Provider credentials come from environment configuration, never from the repository, and never appear in this case study.",
-        "Planned: authentication — Making the workspace multi-user is a prerequisite for permissions, not an afterthought to them.",
-        "Planned: role-based permissions — The intended direction is granular access: who can see which budget, project or decision.",
+        "JWT sessions — Sign-in issues a token that the API verifies on every request; the client never treats a hidden control as an authorization boundary.",
+        "Google OAuth — Delegated sign-in is available alongside password accounts, so there is no password to store for those users.",
+        "Hashed passwords — Password accounts store a bcrypt hash, never the password itself.",
+        "Password reset by email — Reset tokens are sent by the API through a mail provider and expire.",
+        "Provider credentials stay server-side — The AI integration calls the provider from the server, so the key is never exposed to the browser or bundled into the client.",
+        "Configuration through the environment — Secrets come from environment configuration, never from the repository, and never appear in this case study.",
+        "Planned: granular permissions — Moving from a shared workspace to scoped access: who can see which budget, project or decision.",
       ],
     },
     {
@@ -605,14 +614,14 @@ export const ceooo: Project = {
           summary:
             "What a real dataset would force, and what this build therefore does not do.",
           items: [
-            "There is no server, so there is no server-side pagination or querying — every view works on the local dataset",
+            "No benchmark is quoted for the API: none was measured against a dataset larger than the seeded demo",
             "No memoisation strategy is claimed for datasets larger than a demo workspace",
             "Real data would require persistence, authentication and permissions before performance work mattered",
-            "The local dataset is a demonstration dataset, not a scaled one",
+            "The seeded dataset is demonstration data, not a company's scaled production data",
           ],
         },
       ],
-      note: "No rendering timings or bundle figures are quoted, because none were measured for publication. For an interface concept the interesting engineering is where the numbers come from, not how fast the demo paints.",
+      note: "No rendering timings, query timings or bundle figures are quoted, because none were measured for publication. Where a figure comes from matters more than how fast the demo paints.",
     },
     {
       kind: "accordion",
@@ -671,10 +680,11 @@ export const ceooo: Project = {
           summary:
             "A production build that runs, with the one credential it needs kept on the server side.",
           items: [
-            "Next.js production build runs locally",
+            "Next.js production build and the Express API run locally",
+            "PostgreSQL through Prisma, with migrations applied as a deliberate step",
+            "Docker and Kubernetes manifests for the client, API, PostgreSQL and Redis",
             "Provider credentials supplied through environment configuration, never committed",
             "The AI call made server-side, so nothing credential-shaped reaches the client bundle",
-            "The demo dataset shipped as a typed module rather than fetched",
           ],
         },
         {
@@ -683,10 +693,10 @@ export const ceooo: Project = {
           summary:
             "There is no public deployment for this project, so no live demo link is offered.",
           items: [
-            "Hosting for the Next.js application",
-            "A server runtime for the AI integration layer in the hosted environment",
+            "Hosting for the Next.js client and the Express API",
+            "A managed PostgreSQL instance",
             "Secrets provisioned in the host rather than on a local machine",
-            "A server-side data store, which is a prerequisite for a genuinely useful deployment",
+            "A running worker and mail provider for password reset in production",
           ],
         },
       ],
@@ -782,11 +792,11 @@ export const ceooo: Project = {
           ],
         },
         {
-          title: "Label the concept as a concept",
-          body: "This project deliberately does less than the rest of the portfolio — no API, no database, no auth — and saying so is stronger than implying otherwise.",
+          title: "Seed data is not a product dataset",
+          body: "The workspace ships with seeded records so every module can be used immediately; saying that plainly is what keeps the interface from implying live company data.",
           points: [
-            "A frontend-focused project described honestly is a clearer signal than one padded with technologies it does not use",
-            "Naming the ERP and CRM work as planned is what makes the company-performance module credible rather than vague",
+            "A demo dataset described honestly is a clearer signal than one padded with integrations it does not run",
+            "Naming the deeper ERP and CRM sync as planned is what makes the integration story credible rather than vague",
           ],
         },
       ],
@@ -801,11 +811,10 @@ export const ceooo: Project = {
       items: [
         "ERP integration — Reading real financial and operational data so the budget and performance views reflect the actual business rather than a typed dataset.",
         "CRM integration — Customer and pipeline information, so stakeholder and performance views include the revenue side of the picture.",
-        "Server-side persistence — Replacing the local dataset with stored records, which is the prerequisite for everything else on this list.",
         "Advanced company analytics — Deeper performance analysis over persisted data instead of a demonstration dataset.",
         "Automated reporting — Assembling a periodic summary from the records the workspace already holds, rather than an executive compiling it by hand.",
         "Expanded AI decision support — Broader assistance across the modules, still scoped to information the user has entered and still presented as a draft.",
-        "Granular permissions — Moving beyond a single-user workspace to scoped access: who can see which budget, project or decision.",
+        "Granular permissions — Moving beyond a shared workspace to scoped access: who can see which budget, project or decision.",
         "Multi-user collaboration — Decisions and notes that more than one person can see and act on, which is what turns the workspace into a shared record.",
       ],
     },
@@ -814,7 +823,7 @@ export const ceooo: Project = {
       id: "technology-stack",
       title: "Technology stack",
       description:
-        "What the project is built with, with everything designed-but-unbuilt kept in its own group. There is no backend stack here because there is no backend.",
+        "What the project is built with, backend first, with integration work that is still planned kept in its own group.",
       groups: [
         {
           label: "Application",

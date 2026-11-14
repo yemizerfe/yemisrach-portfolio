@@ -1,6 +1,11 @@
+import { ArrowUpRight } from "lucide-react";
+
+import { GitHubIcon } from "@/components/shared/github-icon";
 import { Section } from "@/components/shared/section";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { ProjectGrid } from "@/components/shared/project-grid";
+import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/data/site";
 /**
  * Selected projects — four builds, each with its own engineering case study.
  *
@@ -23,6 +28,23 @@ export function SelectedProjects() {
         />
 
         <ProjectGrid />
+
+        {/* The grid is a selection, not the whole account: every card links to
+            its own repository, and this links to the rest of them. */}
+        <div className="flex justify-center">
+          <Button asChild variant="secondary" size="sm">
+            <a
+              href={siteConfig.github}
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label={`More repositories on GitHub: ${siteConfig.githubHandle}`}
+            >
+              <GitHubIcon className="size-4" />
+              More on GitHub
+              <ArrowUpRight className="size-4" />
+            </a>
+          </Button>
+        </div>
       </div>
     </Section>
   );

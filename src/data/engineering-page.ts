@@ -136,10 +136,10 @@ export const engineeringTopics: EngineeringTopic[] = [
     paragraphs: [
       "Cache-aside is the only pattern used here, and for a specific reason: the cache is never the source of truth. If it is empty or unavailable the request still succeeds against PostgreSQL, which means losing the cache is a performance event rather than an outage.",
       "Keys are derived from normalised parameters, TTLs are chosen per data volatility, and invalidation is tied to the event that changed the data instead of to a guess. Private and per-user responses are never written to a shared cache.",
-      "Honest scope: EstatePlus uses this design as its cache layer and NexusGuard uses Redis where implemented for short-lived state such as rate-limit counters and status fan-out. Neither cache is load-bearing for correctness, and no hit-rate figure is quoted because none has been measured.",
+      "Honest scope: EstatePlus uses this design as its cache layer, NexusGuard uses Redis for short-lived state such as rate-limit counters and status fan-out, and weTalk keeps presence and session state there. No cache is load-bearing for correctness, and no hit-rate figure is quoted because none has been measured.",
     ],
     appliedIn:
-      "Designed in EstatePlus; used where implemented in NexusGuard; documented as the scaling step in weTalk.",
+      "Implemented in EstatePlus (Redis client, non-fatal at boot), weTalk (presence and session state) and NexusGuard (rate-limit counters and short-lived job state).",
   },
   {
     id: "background-processing",
@@ -175,10 +175,10 @@ export const engineeringTopics: EngineeringTopic[] = [
     paragraphs: [
       "EstatePlus is where this matters: ingesting data from external sources and generating reports are long-running operations that fail in ways which need retrying, so they are modelled as queued jobs with a worker fleet separate from the API.",
       "The distinction that shapes the design is between a work queue and an event log. RabbitMQ carries tasks — one message, one owner, per-message acknowledgement, retries and dead-lettering. Kafka carries events — published once and read independently by aggregation, notification and audit consumers at their own pace, with replay available when a consumer has to be rebuilt. Using one for the other's job is what makes these systems brittle.",
-      "Honest scope: in EstatePlus the queue, stream and worker layers are part of the target architecture and are labelled that way. The API, the schema and the report lifecycle come first, so each supporting layer is added against a real workload instead of a guessed one.",
+      "Honest scope: in EstatePlus the queue, stream and worker layers exist in the repository and run locally, but the platform has not been deployed under production load. Each connection is non-fatal at boot, so the API keeps serving when they are unavailable.",
     ],
     appliedIn:
-      "Designed for EstatePlus (RabbitMQ task queue, Kafka event stream, worker processes) — not yet implemented.",
+      "Implemented in EstatePlus (RabbitMQ task queue, Kafka event producer, worker processes) — runnable locally, not yet exercised under production load.",
   },
   {
     id: "realtime-systems",

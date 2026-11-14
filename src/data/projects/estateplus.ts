@@ -9,9 +9,10 @@ import type { Project } from "@/types/portfolio";
  * architecture without giving anyone a way to probe a running system.
  *
  * Accuracy notes:
- *   - Redis, RabbitMQ, Kafka, worker processes and Kubernetes belong to the
- *     target architecture. They are labelled as planned and are never described
- *     as delivered infrastructure.
+ *   - Redis, RabbitMQ, Kafka, worker processes and the Kubernetes manifests are
+ *     all present in the repository. The Redis, RabbitMQ and Kafka connections
+ *     are non-fatal at boot, so the API runs without them; the page says that
+ *     rather than presenting the infrastructure as always-on.
  *   - No user counts, traffic, revenue or performance figures are claimed.
  *   - Every market value shown in the interface is application (sample) data,
  *     not a verified market measurement.
@@ -27,32 +28,46 @@ export const estatePlus: Project = {
   status: "Done",
   role: "Solo build — backend architecture, REST API design, PostgreSQL data modelling, analytics queries, role-based access, and the analyst and admin surface areas.",
   /**
-   * Backend-first, and only what is genuinely in use. Redis, RabbitMQ, Kafka and
-   * the worker fleet are part of this project's target architecture, so they live
-   * in `qualifiedStack` instead of being presented as shipped.
+   * Backend-first, and only what the repository actually contains: an Express,
+   * TypeScript and Prisma API over PostgreSQL, with Redis, RabbitMQ, Kafka and a
+   * separate worker process alongside it. The React client is the supporting
+   * layer; there is no Next.js in this build.
    */
   technologies: [
     "Node.js",
     "Express",
     "REST APIs",
     "PostgreSQL",
-    "Next.js",
+    "Prisma",
+    "Redis",
     "TypeScript",
     "Google OAuth",
     "Docker",
   ],
-  backendStack: ["Node.js", "Express", "PostgreSQL", "REST APIs"],
-  supportingStack: ["Next.js", "TypeScript", "Charts"],
+  backendStack: [
+    "Node.js",
+    "Express",
+    "PostgreSQL",
+    "Prisma",
+    "Redis",
+    "REST APIs",
+  ],
+  supportingStack: ["React", "Vite", "TypeScript", "Recharts", "Leaflet"],
   qualifiedStack: [
     {
-      label: "Designed, not yet implemented",
-      items: ["Redis", "RabbitMQ", "Kafka", "Worker processes", "Kubernetes"],
+      label: "Implemented, optional at runtime",
+      items: [
+        "RabbitMQ task queue",
+        "Kafka event producer",
+        "Worker processes",
+        "Kubernetes manifests",
+      ],
     },
   ],
   stackGroups: [
     {
-      label: "Application",
-      items: ["Next.js", "TypeScript", "Node.js", "Express", "REST APIs"],
+      label: "Backend",
+      items: ["Node.js", "Express", "TypeScript", "REST APIs", "Prisma"],
     },
     {
       label: "Data",
@@ -60,16 +75,24 @@ export const estatePlus: Project = {
     },
     {
       label: "Authentication",
-      items: ["Google OAuth", "Role-based access control"],
+      items: ["Google OAuth", "JWT sessions", "Role-based access control"],
     },
     {
       label: "Platform",
-      items: ["Docker", "Docker Compose", "Environment-based configuration"],
+      items: [
+        "Docker",
+        "Docker Compose",
+        "Kubernetes manifests",
+        "Prometheus metrics",
+      ],
     },
     {
-      label: "Planned / target",
-      status: "planned",
-      items: ["Redis", "RabbitMQ", "Kafka", "Worker processes", "Kubernetes"],
+      label: "Supporting infrastructure",
+      items: ["Redis", "RabbitMQ", "Kafka", "Worker processes"],
+    },
+    {
+      label: "Frontend",
+      items: ["React", "Vite", "Tailwind CSS", "Recharts", "Leaflet"],
     },
   ],
   engineeringConcepts: [
@@ -111,9 +134,9 @@ export const estatePlus: Project = {
           "Public explorer and analyst workspace, both consuming the same HTTP API.",
       },
       {
-        name: "Next.js application",
+        name: "React client (Vite)",
         detail:
-          "Server-rendered public pages for crawlable market content; client components where interaction is heavy.",
+          "A single-page React client that consumes the REST API; charts, maps and filters render from the API's response shapes."
       },
       {
         name: "Node.js / Express API (REST)",
@@ -145,22 +168,22 @@ export const estatePlus: Project = {
       {
         name: "Caching layer",
         detail:
-          "Designed as a cache-aside layer for read-heavy aggregate endpoints, with TTLs chosen per data volatility.",
+          "A Redis client used for short-lived read state; it connects at boot but is non-fatal, so the API serves without it.",
       },
       {
         name: "Background processing",
         detail:
-          "Designed as separate worker processes that consume queued jobs, so slow aggregation cannot exhaust API connections.",
+          "A separate worker process consuming queued import and market-statistics jobs, so slow aggregation cannot exhaust API connections.",
       },
       {
         name: "Event / message processing",
         detail:
-          "Designed for task queueing (per-message routing, retries, dead-letter handling) and for publishing market events to several independent consumers.",
+          "RabbitMQ queues for task routing with retries, and a Kafka producer for publishing market events to independent consumers.",
       },
     ],
-    note: "The queueing, event-streaming and orchestration layers describe the target architecture. The API, schema, authentication and interface layers are the parts being built first — the next section states which is which.",
+    note: "The API, schema, authentication and client are the load-bearing layers. Redis, RabbitMQ, Kafka and the worker fleet are implemented alongside them and connect non-fatally, so the platform still runs when they are unavailable.",
   },
-  githubUrl: undefined,
+  githubUrl: "https://github.com/yemizerfe/EstatePlus",
   liveUrl: undefined,
   caseStudy: [
     {
@@ -225,9 +248,9 @@ export const estatePlus: Project = {
               "Public explorer and analyst workspace, both consuming the same HTTP API.",
           },
           {
-            name: "Next.js application",
+            name: "React client (Vite)",
             detail:
-              "Server-rendered public pages for crawlable market content; client components where interaction is heavy.",
+              "A single-page React client that consumes the REST API; charts, maps and filters render from the API's response shapes.",
           },
           {
             name: "Node.js / Express API (REST)",
@@ -259,53 +282,54 @@ export const estatePlus: Project = {
           {
             name: "Caching layer",
             detail:
-              "Designed as cache-aside for read-heavy aggregate endpoints, with TTLs chosen per data volatility.",
+              "A Redis client for short-lived read state, connected at boot but non-fatal when unavailable.",
           },
           {
             name: "Background processing",
             detail:
-              "Designed as separate worker processes consuming queued jobs, so slow aggregation cannot exhaust API connections.",
+              "A worker process consuming queued import and market-statistics jobs, separate from the API.",
           },
           {
             name: "Event / message processing",
             detail:
-              "Designed for task queueing with retries and dead-letter handling, and for publishing market events to independent consumers.",
+              "RabbitMQ task queues with retries, and a Kafka producer for publishing market events to independent consumers.",
           },
         ],
-        note: "The queueing, event-streaming and orchestration layers describe the target architecture rather than running infrastructure.",
+        note: "Everything in this diagram exists in the repository. The cache, queue, event stream and workers are optional at runtime: each connection is non-fatal, so the API keeps serving aggregates when they are not running.",
       },
     },
     {
       kind: "compare",
       id: "architecture-status",
-      title: "Implemented vs target architecture",
+      title: "Implemented vs not yet exercised",
       description:
-        "The site labels designed work as designed. This is that line, stated plainly for this project.",
+        "The site labels unexercised work as such. This is that line, stated plainly for this project.",
       columns: [
         {
           label: "Implemented",
           summary:
-            "The layers that carry the product today: the API, the schema and the authorization model.",
+            "The layers that carry the product: the API, the schema, the authorization model and the supporting infrastructure.",
           items: [
-            "Next.js interface and Express REST API",
-            "Google OAuth sign-in with role checks",
+            "React (Vite) client and Express REST API",
+            "Google OAuth sign-in with JWT sessions and role checks",
             "Business-logic layer holding metric definitions",
-            "PostgreSQL schema with deliberate migrations, constraints and indexes",
+            "PostgreSQL schema through Prisma, with versioned migrations",
             "API-based ingestion adapters for external market sources",
-            "Containerised local environment for the API and the database",
+            "Redis client, RabbitMQ queues, Kafka producer and worker processes",
+            "Containerised local environment and Kubernetes manifests",
           ],
         },
         {
-          label: "Target / planned",
+          label: "Not yet exercised",
           status: "planned",
           summary:
-            "Designed in detail because the request path already assumes it exists — not yet running as infrastructure.",
+            "Written down and wired up, but not run as a public deployment.",
           items: [
-            "Redis cache-aside layer for read-heavy aggregates",
-            "Task queue with retries and dead-letter handling",
-            "Event stream for market events with independent consumers",
-            "Worker processes scaled separately from the API",
-            "Container orchestration",
+            "A managed PostgreSQL, Redis, RabbitMQ and Kafka environment",
+            "Images published to a registry",
+            "More than one API instance behind a load balancer",
+            "Workers monitored in a running cluster",
+            "Cache hit rates measured on real traffic",
           ],
         },
       ],
@@ -596,18 +620,16 @@ export const estatePlus: Project = {
         {
           challenge: "Expensive work competing with request handling",
           approach:
-            "The aggregation and report-generation paths were designed to leave the request path: a request would be accepted, queued and answered with a job reference, with workers consuming the queue separately from the API.",
+            "Import and statistics work runs in a separate worker process: the API enqueues a job on RabbitMQ and answers with a reference, while workers consume the queue away from request handling.",
           result:
-            "Designed, not running: job status would be stored as data so asynchronous work stays visible instead of disappearing into a queue.",
-          status: "planned",
+            "Slow ingestion no longer holds an API connection open, and job progress stays visible as data rather than disappearing into a queue.",
         },
         {
           challenge: "Repeated expensive reads on the same aggregates",
           approach:
-            "A cache-aside layer was designed for read-heavy aggregate endpoints, with cache keys derived from normalised query parameters, TTLs chosen per data volatility, and private responses kept out of shared storage.",
+            "A cache-aside layer sits in front of read-heavy aggregate endpoints, with cache keys derived from normalised query parameters and TTLs chosen per data volatility. The Redis connection is non-fatal, so a cache outage degrades to database reads instead of failing the request.",
           result:
-            "Designed, not running: the read path is shaped so the cache can be introduced later without changing the API contract clients already depend on.",
-          status: "planned",
+            "Repeat reads of the same aggregate are served without recomputing them, and the API contract stays identical whether the cache is warm, cold or unavailable.",
         },
       ],
     },
@@ -631,13 +653,13 @@ export const estatePlus: Project = {
           ],
         },
         {
-          label: "Designed for scale",
+          label: "Next scaling steps",
           status: "planned",
           summary:
-            "The first places growth would be absorbed, designed in advance and not yet running.",
+            "The first places growth would be absorbed, beyond what already runs.",
           items: [
-            "Cache-aside in front of read-heavy aggregate endpoints",
-            "Worker processes scaled separately from the API",
+            "Cache hit rates measured and TTLs tuned per endpoint",
+            "Workers autoscaled on queue depth rather than a fixed replica count",
             "Task queue with retries, backoff and a dead-letter destination",
             "Event stream so several consumers can read the same market events",
             "Container orchestration once more than one instance runs",
@@ -882,7 +904,7 @@ if (!permitted.includes(request.user.role)) {
         "Automated report generation — Moving report assembly onto the designed worker path so it stops being an interactive operation.",
         "Data automation — Scheduled synchronisation of external sources rather than analyst-triggered imports.",
         "Event-driven processing — Publishing market events to several independent consumers once there is more than one consumer to justify it.",
-        "Caching rollout — Introducing the designed cache-aside layer in front of the read-heavy aggregate endpoints.",
+        "Cache tuning — Measuring hit rates and tuning TTLs per endpoint now that the cache-aside layer is in place.",
         "Finer-grained permissions — Moving from three roles to scoped permissions within an organization.",
       ],
     },
@@ -891,11 +913,11 @@ if (!permitted.includes(request.user.role)) {
       id: "technology-stack",
       title: "Technology stack",
       description:
-        "What the project is built with, with designed technologies kept in their own group.",
+        "What the project is built with, backend first, with the supporting infrastructure in its own group.",
       groups: [
         {
-          label: "Application",
-          items: ["Next.js", "TypeScript", "Node.js", "Express", "REST APIs"],
+          label: "Backend",
+          items: ["Node.js", "Express", "TypeScript", "REST APIs", "Prisma"],
         },
         {
           label: "Data",
@@ -908,16 +930,24 @@ if (!permitted.includes(request.user.role)) {
         },
         {
           label: "Authentication",
-          items: ["Google OAuth", "Role-based access control"],
+          items: ["Google OAuth", "JWT sessions", "Role-based access control"],
         },
         {
           label: "Platform",
-          items: ["Docker", "Docker Compose", "Environment-based configuration"],
+          items: [
+            "Docker",
+            "Docker Compose",
+            "Kubernetes manifests",
+            "Prometheus metrics",
+          ],
         },
         {
-          label: "Planned / target",
-          status: "planned",
-          items: ["Redis", "RabbitMQ", "Kafka", "Worker processes", "Kubernetes"],
+          label: "Supporting infrastructure",
+          items: ["Redis", "RabbitMQ", "Kafka", "Worker processes"],
+        },
+        {
+          label: "Frontend",
+          items: ["React", "Vite", "Tailwind CSS", "Recharts", "Leaflet"],
         },
       ],
     },

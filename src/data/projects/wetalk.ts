@@ -12,9 +12,9 @@ import type { Project } from "@/types/portfolio";
  * deliberately absent — the page should explain a design without publishing the
  * details needed to interfere with a running instance.
  *
- * Accuracy note: Redis is part of the scaling path rather than the implemented
- * baseline, and is labelled as such. No user counts, traffic or performance
- * figures are claimed.
+ * Accuracy note: Redis is implemented for presence, session and rate-limit
+ * state; PostgreSQL remains the message store. No user counts, traffic or
+ * performance figures are claimed.
  */
 export const weTalk: Project = {
   slug: "wetalk",
@@ -55,12 +55,7 @@ export const weTalk: Project = {
     "REST APIs",
   ],
   supportingStack: ["React 18", "TypeScript", "Vite", "Zustand", "Tailwind CSS"],
-  qualifiedStack: [
-    {
-      label: "Designed, not yet implemented",
-      items: ["Redis (shared socket session and adapter state)"],
-    },
-  ],
+
   stackGroups: [
     {
       label: "Frontend",
@@ -94,9 +89,8 @@ export const weTalk: Project = {
       items: ["Docker", "Docker Compose", "Environment-based configuration"],
     },
     {
-      label: "Where appropriate",
-      status: "planned",
-      items: ["Redis"],
+      label: "State & delivery",
+      items: ["Redis", "Presence tracking", "Session state"],
     },
   ],
   engineeringConcepts: [
@@ -125,6 +119,8 @@ export const weTalk: Project = {
     "Request and payload validation with Zod",
     "Cursor-based message history",
     "Connection state and reconnect handling",
+    "Presence and typing indicators",
+    "Read receipts",
     "Client state management with Zustand",
   ],
   architecture: {
@@ -164,7 +160,7 @@ export const weTalk: Project = {
       {
         name: "Redis",
         detail:
-          "Designed for socket session and adapter state once more than one server instance runs, so an event reaches the instance holding the recipient's connection. It is not the message store — PostgreSQL is.",
+          "Holds presence, session and rate-limit state, so ephemeral data never has to live in the message store. It is not the message store — PostgreSQL is.",
       },
       {
         name: "Docker",
@@ -172,7 +168,7 @@ export const weTalk: Project = {
           "PostgreSQL and Redis run as containers locally, so the development environment matches the intended deployment shape.",
       },
     ],
-    note: "The single-instance path is the implemented baseline; a Redis-backed Socket.IO adapter is the scaling step once more than one API instance exists.",
+    note: "Redis carries presence, session and rate-limit state; PostgreSQL keeps the conversation. A Redis-backed Socket.IO adapter is the remaining step once more than one instance runs.",
   },
   githubUrl: "https://github.com/yemizerfe/weTalk",
   liveUrl: undefined,
@@ -266,7 +262,7 @@ export const weTalk: Project = {
           {
             name: "Redis",
             detail:
-              "Designed for shared socket session and adapter state once more than one instance runs. It carries delivery, never history.",
+              "Presence, session and rate-limit state. It carries delivery state, never history.",
           },
           {
             name: "Docker",
@@ -530,10 +526,9 @@ export const weTalk: Project = {
         {
           challenge: "Deciding where Redis actually earns its place",
           approach:
-            "Redis was deliberately kept out of the baseline. Its designed role is shared socket session and adapter state once more than one server instance exists, so that an event reaches the instance holding the recipient's connection.",
+            "Redis is used for the data that should not be a database row: presence, session and rate-limit state, all of it expiring by nature. Message history stays in PostgreSQL, and the socket layer reads presence from Redis rather than querying the message store.",
           result:
-            "Designed, not running. Naming that boundary is what keeps the implemented column honest: Redis carries delivery state, PostgreSQL keeps history.",
-          status: "planned",
+            "Ephemeral state evicts itself instead of accumulating in the permanent store, and the boundary is explicit: Redis carries delivery and presence, PostgreSQL keeps history.",
         },
       ],
     },
@@ -618,7 +613,7 @@ export const messageSchema = z.object({
           items: [
             "Shared socket session and adapter state so an event reaches the instance holding the recipient's connection",
             "More than one API instance behind a load balancer",
-            "Presence and delivery state kept out of instance memory",
+            "Connection pooling for the Redis client once several instances share it",
             "Backpressure on the socket so one slow client cannot consume an instance",
           ],
         },
@@ -785,11 +780,11 @@ export const messageSchema = z.object({
           ],
         },
         {
-          title: "Name what is designed before it is needed",
-          body: "The multi-instance path is easy to describe as though it already exists, because the code is already shaped for it.",
+          title: "Keep ephemeral state out of the permanent store",
+          body: "Presence and typing state change constantly and are worthless a minute later; putting them in the same store as messages makes every one of those changes a write to the durable record.",
           points: [
-            "Keeping Redis out of the implemented list makes the rest of the case study believable",
-            "The boundary was worth designing early even though the implementation is later work",
+            "Separating presence and session state into Redis keeps the PostgreSQL workload about conversations",
+            "The boundary is explicit: losing Redis costs live presence, never a message",
           ],
         },
       ],
@@ -805,7 +800,7 @@ export const messageSchema = z.object({
         "Additional messaging functionality — A wider set of message capabilities on top of the same validated, persisted, broadcast pipeline.",
         "Improved realtime reliability — Retry and acknowledgement behaviour around the realtime path, so the sender has a clearer picture than 'the server accepted the write'.",
         "More advanced conversation features — Richer conversation management while keeping the one-to-one scope that the data model is built on.",
-        "Multi-instance delivery — Introducing the designed Redis-backed socket session and adapter state so more than one API instance can run.",
+        "Multi-instance delivery — Adding the Redis-backed Socket.IO adapter so more than one API instance can run; presence and session state already live in Redis.",
         "Presence and connection insight — Surfacing connection state more usefully, without turning it into a claim about the other person's behaviour.",
         "Test depth on the realtime path — Extending the failure-path coverage around reconnection and repeated sends.",
       ],
@@ -815,7 +810,7 @@ export const messageSchema = z.object({
       id: "technology-stack",
       title: "Technology stack",
       description:
-        "All of this is in use in the build, except Redis, which is kept in its own group.",
+        "Everything here is in use in the build, with state and delivery grouped separately from storage.",
       groups: [
         {
           label: "Frontend",
@@ -849,9 +844,8 @@ export const messageSchema = z.object({
           items: ["Docker", "Docker Compose", "Environment-based configuration"],
         },
         {
-          label: "Where appropriate",
-          status: "planned",
-          items: ["Redis"],
+          label: "State & delivery",
+          items: ["Redis", "Presence tracking", "Session state"],
         },
       ],
     },

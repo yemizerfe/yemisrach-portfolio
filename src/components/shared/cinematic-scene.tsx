@@ -2,6 +2,31 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+
+/**
+ * `@react-three/fiber` 9.x constructs a `THREE.Clock` internally, which three
+ * deprecated in r183 in favour of `THREE.Timer`; the migration is scheduled for
+ * R3F 10 and no stable release carries it yet. The resulting notice is about the
+ * library, not this scene, and it would otherwise be the only thing the page
+ * prints to a visitor's console — so it is dropped here. The match is narrow
+ * (one known prefix) and fails open: every other warning still reaches the
+ * console untouched. Delete this block once R3F ships the Timer migration.
+ */
+if (typeof window !== "undefined") {
+  const FLAG = "__r3fClockNoticeFiltered";
+  const host = window as typeof window & Record<string, unknown>;
+
+  if (host[FLAG] !== true) {
+    host[FLAG] = true;
+    const warn = console.warn.bind(console);
+    console.warn = (...args: unknown[]) => {
+      if (typeof args[0] === "string" && args[0].startsWith("THREE.Clock:")) {
+        return;
+      }
+      warn(...args);
+    };
+  }
+}
 import { Environment, Lightformer } from "@react-three/drei";
 import gsap from "gsap";
 import * as THREE from "three";
