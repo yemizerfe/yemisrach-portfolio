@@ -1,4 +1,4 @@
-# Yemisrach Zerfe — Software Engineering Portfolio
+# Yemisrach Zerfe — Backend Software Engineering Portfolio
 
 Personal portfolio website showcasing my software engineering background, technical skills, selected projects, and experience with backend development and modern web technologies.
 
