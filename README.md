@@ -1,81 +1,46 @@
-# Yemisrach Zerfe — Backend Software Engineering Portfolio
+# Yemisrach Zerfe — Portfolio Website
 
-Personal portfolio website showcasing my software engineering background, technical skills, selected projects, and experience with backend development and modern web technologies.
+Personal portfolio website showcasing my software engineering background, professional experience, technical skills, and selected projects.
 
-## 🌐 Live Portfolio
+## 🌐 Live Website
 
 **[Visit the Live Portfolio](https://yemisrach-portfolio.vercel.app/)**
 
-## About
+## 📌 About
 
-This portfolio presents my work and development journey as a Software Engineering professional with a focus on backend engineering, APIs, databases, secure application development, and system design.
+This portfolio was created to provide a professional overview of my work as a Software Engineer and to showcase selected projects and practical experience in software development.
 
-It highlights selected projects that demonstrate practical experience building and integrating real-world software systems.
+The website includes information about my background, skills, experience, projects, and ways to connect with me.
 
-## Technical Focus
+## 🛠️ Built With
 
-- Backend Development
-- REST API Development
-- Database Design
-- Authentication & Authorization
-- Third-Party API Integration
-- Secure API Development
-- System Architecture
-- Data-Driven Applications
+- React
+- TypeScript
+- Tailwind CSS
+- Vite
+- Framer Motion
 
-## Technologies
+## ✨ Features
 
-**Languages:** TypeScript, JavaScript, Python, SQL
+- Responsive portfolio design
+- Professional profile and experience sections
+- Project showcase
+- Technical skills presentation
+- Smooth animations and interactive UI
+- Responsive layout across desktop and mobile devices
+- Direct links to projects and professional profiles
 
-**Backend:** Node.js, Express.js, FastAPI, REST APIs, WebSockets
+## 🚀 Deployment
 
-**Databases:** PostgreSQL, MongoDB, MySQL, Redis
+The portfolio is deployed and publicly available at:
 
-**Security & Integration:** OAuth 2.0, JWT, RBAC, API Security
-
-**Tools & Infrastructure:** Git, GitHub, Docker, Nginx, Postman, Bruno
-
-## Featured Projects
-
-### EstatePlus
-Real-estate market intelligence platform focused on integrating property and financial data into a PostgreSQL-backed application.
-
-**Technologies:** Node.js, Express.js, TypeScript, PostgreSQL
-
-### CEOOO
-Business operations and integration platform connecting external business services through OAuth-based authentication and API integrations.
-
-**Technologies:** Next.js, TypeScript, OAuth 2.0
-
-### weCare
-Dementia support and care-management platform providing patient and caregiver workflows, role-based access, reminders, shared care features, and controlled location sharing.
-
-**Technologies:** Node.js, Express.js, MongoDB, React
-
-### Fine Furniture
-Furniture e-commerce platform with backend product management and a database-driven customer storefront.
-
-**Technologies:** Node.js, Express.js, Database Development
-
-## Engineering Approach
-
-I focus on understanding the problem first, then designing appropriate data models, backend services, APIs, security mechanisms, and integrations to build maintainable software.
-
-My approach emphasizes:
-
-- Clear system and data modeling
-- Maintainable backend architecture
-- Secure API design
-- Reliable database interactions
-- Practical third-party integrations
-- Clean and understandable code
-
-## Connect
-
-- **Portfolio:** [yemisrach-portfolio.vercel.app](https://yemisrach-portfolio.vercel.app/)
-- **GitHub:** [github.com/yemizerfe](https://github.com/yemizerfe)
-
----
-
-**Explore the complete portfolio:**  
 **[https://yemisrach-portfolio.vercel.app/](https://yemisrach-portfolio.vercel.app/)**
+
+## 👤 Author
+
+**Yemisrach Zerfe**
+
+Software Engineer
+
+- **GitHub:** [github.com/yemizerfe](https://github.com/yemizerfe)
+- **Portfolio:** [yemisrach-portfolio.vercel.app](https://yemisrach-portfolio.vercel.app/)
