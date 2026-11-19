@@ -1335,6 +1335,12 @@
 }
 
 @media print {
+  /* One A4 page, no browser margins beyond the paper's own. */
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
   .print-hidden {
     display: none !important;
   }
@@ -1342,6 +1348,46 @@
   body {
     background: #ffffff;
     color: #111111;
+  }
+
+  /* Screen furniture: navigation, footer, backdrop and the 3D canvas. They are
+     not part of the document and their height would force a second page. */
+  header.fixed,
+  body > footer,
+  footer,
+  nav,
+  canvas,
+  .fixed {
+    display: none !important;
+  }
+
+  /* The wrapper's screen padding would push the sheet onto a second page. */
+  .resume-shell {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* The résumé sheet loses its card styling and fills the page instead. */
+  .resume-sheet {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .resume-sheet a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  .resume-sheet section,
+  .resume-sheet li,
+  .resume-sheet p {
+    break-inside: avoid;
   }
 }
 
